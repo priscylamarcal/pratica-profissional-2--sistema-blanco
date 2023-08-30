@@ -1,0 +1,15 @@
+inherited form_cadastro_pai2: Tform_cadastro_pai2
+  Caption = 'Adicionar Produto'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    inherited ScrollBox1: TScrollBox
+      inherited lbl_codigo: TLabel
+        Left = 3
+        Top = 13
+        ExplicitLeft = 3
+        ExplicitTop = 13
+      end
+    end
+  end
+end

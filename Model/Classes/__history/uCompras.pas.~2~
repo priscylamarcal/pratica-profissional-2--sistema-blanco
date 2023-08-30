@@ -1,0 +1,276 @@
+unit uCompras;
+
+interface
+
+uses Classes, SysUtils, System.Generics.Collections,
+  uPai, uFornecedores, uRoupas, uCondicoesPagamentos;
+
+type
+  Compras = class(Pai)
+  private
+
+  protected
+    modelo                : string[50];
+    serie                 : string[50];
+    num_nota              : string[50];
+    data_emissao          : TDateTime;
+    data_chegada          : TDateTime;
+    umFornecedor          : Fornecedores;
+    listaRoupas           : TObjectList<Roupas>;
+    qtdRoupas             : integer;
+    valor_unitario        : currency;
+    desconto              : currency;
+    valor_total           : currency;
+
+    //total referente o que está adicionado a tabela de roupas
+    qtdTotalRoupa         : integer;
+    qtdTotalDesconto      : currency;
+    totalValor            : currency;
+
+    frete                 : currency;
+    seguro                : currency;
+    outras_despesas       : currency;
+    umaCondicaoPagamento  : CondicoesPagamentos;
+    observacao            : string[250];
+
+  public
+//    constructor crieObj;
+//    destructor destrua_se;
+
+    procedure setModelo ( pModelo : string );
+    procedure setSerie ( pSerie : string );
+    procedure setNumNota ( pNumNota : string );
+    procedure setDataEmissao ( pDataEmissao : TDateTime );
+    procedure setDataChegada ( pDataChegada : TDateTime );
+    procedure setUmFornecedor ( pFornecedor : Fornecedores );
+    procedure setListaRoupas ( pListaRoupas : TObjectList<Roupas> );
+    procedure setQtdRoupas ( pQtdRoupas : integer );
+    procedure setValorUnitario ( pValorUnitario : currency );
+    procedure setDesconto ( pDesconto : currency );
+    procedure setValorTotal ( pValorTotal : currency );
+    procedure setQtdTotalRoupa ( pQtdTotalRoupa : currency );
+    procedure setQtdTotalDesconto ( pQtdTotalDesconto : currency );
+    procedure setTotalValor ( pTotalValor : currency );
+    procedure setFrete ( pFrete : currency );
+    procedure setSeguro ( pSeguro : currency );
+    procedure setOutrasDespesas ( pOutrasDespesas : currency );
+    procedure setUmaCondicaoPagamento ( pUmaCondicaoPagamento : currency );
+    procedure setObservacao ( pObservacao : string );
+
+    function getModelo : string ;
+    function getSerie : string ;
+    function getNumNota : string ;
+    function getDataEmissao : TDateTime ;
+    function getDataChegada : TDateTime ;
+    function getUmFornecedor : Fornecedores ;
+    function getListaRoupas : TObjectList<Roupas> ;
+    function getQtdRoupas : integer ;
+    function getValorUnitario : currency ;
+    function getDesconto : currency ;
+    function getValorTotal : currency ;
+    function getQtdTotalRoupa : currency ;
+    function getQtdTotalDesconto : currency ;
+    function getTotalValor : currency ;
+    function getFrete : currency ;
+    function getSeguro : currency ;
+    function getOutrasDespesas : currency ;
+    function getUmaCondicaoPagamento : currency ;
+    function getObservacao : string ;
+
+  end;
+
+implementation
+
+{ Compras }
+
+function Compras.getDataChegada: TDateTime;
+begin
+
+end;
+
+function Compras.getDataEmissao: TDateTime;
+begin
+
+end;
+
+function Compras.getDesconto: currency;
+begin
+
+end;
+
+function Compras.getFrete: currency;
+begin
+
+end;
+
+function Compras.getListaRoupas: TObjectList<Roupas>;
+begin
+
+end;
+
+function Compras.getModelo: string;
+begin
+
+end;
+
+function Compras.getNumNota: string;
+begin
+
+end;
+
+function Compras.getObservacao: string;
+begin
+
+end;
+
+function Compras.getOutrasDespesas: currency;
+begin
+
+end;
+
+function Compras.getQtdRoupas: integer;
+begin
+
+end;
+
+function Compras.getQtdTotalDesconto: currency;
+begin
+
+end;
+
+function Compras.getQtdTotalRoupa: currency;
+begin
+
+end;
+
+function Compras.getSeguro: currency;
+begin
+
+end;
+
+function Compras.getSerie: string;
+begin
+
+end;
+
+function Compras.getTotalValor: currency;
+begin
+
+end;
+
+function Compras.getUmaCondicaoPagamento: currency;
+begin
+
+end;
+
+function Compras.getUmFornecedor: Fornecedores;
+begin
+
+end;
+
+function Compras.getValorTotal: currency;
+begin
+
+end;
+
+function Compras.getValorUnitario: currency;
+begin
+
+end;
+
+procedure Compras.setDataChegada(pDataChegada: TDateTime);
+begin
+
+end;
+
+procedure Compras.setDataEmissao(pDataEmissao: TDateTime);
+begin
+
+end;
+
+procedure Compras.setDesconto(pDesconto: currency);
+begin
+
+end;
+
+procedure Compras.setFrete(pFrete: currency);
+begin
+
+end;
+
+procedure Compras.setListaRoupas(pListaRoupas: TObjectList<Roupas>);
+begin
+
+end;
+
+procedure Compras.setModelo(pModelo: string);
+begin
+
+end;
+
+procedure Compras.setNumNota(pNumNota: string);
+begin
+
+end;
+
+procedure Compras.setObservacao(pObservacao: string);
+begin
+
+end;
+
+procedure Compras.setOutrasDespesas(pOutrasDespesas: currency);
+begin
+
+end;
+
+procedure Compras.setQtdRoupas(pQtdRoupas: integer);
+begin
+
+end;
+
+procedure Compras.setQtdTotalDesconto(pQtdTotalDesconto: currency);
+begin
+
+end;
+
+procedure Compras.setQtdTotalRoupa(pQtdTotalRoupa: currency);
+begin
+
+end;
+
+procedure Compras.setSeguro(pSeguro: currency);
+begin
+
+end;
+
+procedure Compras.setSerie(pSerie: string);
+begin
+
+end;
+
+procedure Compras.setTotalValor(pTotalValor: currency);
+begin
+
+end;
+
+procedure Compras.setUmaCondicaoPagamento(pUmaCondicaoPagamento: currency);
+begin
+
+end;
+
+procedure Compras.setUmFornecedor(pFornecedor: Fornecedores);
+begin
+
+end;
+
+procedure Compras.setValorTotal(pValorTotal: currency);
+begin
+
+end;
+
+procedure Compras.setValorUnitario(pValorUnitario: currency);
+begin
+
+end;
+
+end.

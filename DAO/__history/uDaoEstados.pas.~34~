@@ -1,0 +1,135 @@
+unit uDaoEstados;
+interface
+uses uDAO, uFilterSearch, uEstados, uPaises;
+type daoEstados = class( DAO )
+  private
+  protected
+  public
+    constructor crieObj;                              override;
+    function getDS : TObject;                         override;
+    function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
+    function salvar ( pObj : TObject ) : string;      override;
+    function excluir ( pObj : TObject ) : string;     override;
+    function carregar ( pObj : TObject ) : string;    override;
+    procedure setPosicao(aCodigo: integer);
+    function VerificaExiste(oEstado: Estados):Boolean;
+    function ValidaExclusao(pObj : TObject):Boolean; override;
+end;
+implementation
+uses
+  System.SysUtils;
+{ daoEstados }
+function daoEstados.carregar(pObj: TObject): string;
+var mEstado : Estados; mPais : Paises;
+begin
+  mEstado:= Estados( pObj );
+  mPais:= mEstado.getoPais;
+  mEstado.setCodigo( aDM.QEstados.FieldByName('CODESTADO').Value );
+  mEstado.setEstado( aDM.QEstados.FieldByName('ESTADO').AsString );
+  mEstado.setUF( aDM.QEstados.FieldByName('UF').AsString );
+  mEstado.getoPais.setCodigo(aDM.QEstados.FieldByName('CODPAIS').Value);
+  mEstado.getoPais.setPais( aDM.QEstados.FieldByName('NOMEPAIS').AsString );
+  mEstado.setDataCad( aDM.QEstados.FieldByName('DATACAD').AsDateTime );
+  mEstado.setUltAlt( aDM.QEstados.FieldByName('ULTALT').AsDateTime );
+end;
+constructor daoEstados.crieObj;
+begin
+  inherited;
+end;
+function daoEstados.excluir(pObj: TObject): string;
+var
+  mEstado : Estados;
+begin
+  aDM.Transacao.StartTransaction;
+  try
+    mEstado  := Estados(pObj);
+    aDM.QEstados.Locate('CODESTADO', mEstado.getCodigo, []);
+    aDM.QEstados.Delete;
+    aDM.Transacao.Commit;
+//    Result := 'País excluído com sucesso!';
+  except
+    aDM.Transacao.Rollback;
+    Result := '';
+  end;
+end;
+function daoEstados.getDS: TObject;
+begin
+  Result:= aDM.DSEstados;
+end;
+function daoEstados.pesquisar(AFilter: TFilterSearch; pChave: string): string;
+var msql : string;
+begin
+    msql:= 'SELECT * FROM ESTADOS';
+    case AFilter.TipoConsulta of
+     TpCCodigo:
+     begin
+       msql:= 'SELECT * FROM ESTADOS WHERE CODESTADO =' + IntToStr( AFilter.Codigo );
+     end;
+     TpCParam:
+     begin
+       msql:= ( 'SELECT * FROM ESTADOS WHERE ESTADO LIKE  ' + QuotedStr( '%' + AFilter.Parametro + '%' ) );
+     end;
+//     TpCPais:
+//     begin
+//       msql:= ( 'SELECT ' + ( AFilter.Pais ) );
+//     end;
+     TpCTODOS:
+     begin
+       msql:= 'SELECT * FROM ESTADOS ORDER BY CODESTADO';
+     end;
+    end;
+    aDM.QEstados.Active:= false;
+    aDM.QEstados.SQL.Text:=msql;
+    aDM.QEstados.Open;
+    result:= '';
+end;
+  function daoEstados.salvar(pObj: TObject): string;
+  var mEstado : Estados; mPais : Paises;
+  begin
+    mEstado:= Estados( pObj );
+    mPais:= mEstado.getoPais;
+    aDM.Transacao.StartTransaction;
+    try
+      if mEstado.getCodigo = 0 then
+      begin
+         aDM.QEstados.Insert;
+         aDM.QEstados.FieldByName('DATACAD').AsDateTime:= mEstado.getDataCad
+      end
+      else
+         aDM.QEstados.Edit;
+      aDM.QEstados.FieldByName('CODESTADO').AsInteger:= mEstado.getCodigo;
+      aDM.QEstados.FieldByName('ESTADO').AsString:= mEstado.getEstado;
+      aDM.QEstados.FieldByName('UF').AsString:= mEstado.getUF;
+      aDM.QEstados.FieldByName('CODPAIS').AsInteger:= mPais.getCodigo;
+      aDM.QEstados.FieldByName('ULTALT').AsDateTime:= now;
+      aDM.QEstados.Post;
+      aDM.Transacao.Commit;
+    except
+      aDM.Transacao.Rollback;
+    end;
+  end;
+procedure daoEstados.setPosicao(aCodigo: integer);
+begin
+  aDM.QEstados.Locate('CODESTADO', aCodigo, []);
+end;
+
+function daoEstados.ValidaExclusao(pObj: TObject): Boolean;
+var
+  mEstado : Estados;
+begin
+  mEstado:= Estados(pObj);
+  Result := not(aDM.QCidades.Locate('CODESTADO', mEstado.getCodigo, []))
+end;
+
+function daoEstados.VerificaExiste(oEstado: Estados): Boolean;
+begin
+  if aDm.QEstados.Locate('ESTADO', oEstado.getEstado, []) then
+    result := ((oEstado.getEstado = aDM.QEstados.FieldByName('ESTADO').asString)
+      and (oEstado.getoPais.getCodigo = aDM.QEstados.FieldByName('CODPAIS').asInteger))
+  Else
+    result := False;
+
+end;
+
+end.
+

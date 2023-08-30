@@ -1,0 +1,36 @@
+unit uCompras;
+
+interface
+
+uses Classes, SysUtils, System.Generics.Collections,
+  uPai, uFornecedores, uRoupas, uCondicoesPagamentos;
+
+type
+  Compras = class(Pai)
+  private
+
+  protected
+    modelo                : string[50];
+    serie                 : string[50];
+    num_nota              : string[50];
+    data_emissao          : TDateTime;
+    data_chegada          : TDateTime;
+    umFornecedor          : Fornecedores;
+    listaRoupas           : TObjectList<Roupas>;
+    quantidadeRoupas      : integer;
+    valor_unitario        : currency;
+    desconto              : currency;
+    valor_total           : currency;
+    frete                 : currency;
+    seguro                : currency;
+    outras_despesas       : currency;
+    umaCondicaoPagamento  : CondicoesPagamentos;
+    observacao            : string[250];
+
+  public
+
+  end;
+
+implementation
+
+end.

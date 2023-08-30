@@ -1,0 +1,26 @@
+inherited form_cadastro_add_roupa_compra: Tform_cadastro_add_roupa_compra
+  Caption = 'Adicionar Roupa'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    inherited ScrollBox1: TScrollBox
+      inherited lbl_codigo: TLabel
+        Left = 3
+        Top = 13
+        Visible = False
+        ExplicitLeft = 3
+        ExplicitTop = 13
+      end
+      inherited edt_codigo: PriTEdit
+        Visible = False
+      end
+      inherited pnl_bottom: TPanel
+        inherited pnl_botao_salvar: TPanel
+          inherited btn_botao_salvar: TSpeedButton
+            Caption = 'Adicionar'
+          end
+        end
+      end
+    end
+  end
+end

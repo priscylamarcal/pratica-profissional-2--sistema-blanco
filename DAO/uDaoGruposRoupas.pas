@@ -1,0 +1,119 @@
+unit uDaoGruposRoupas;
+interface
+uses uDAO, uFilterSearch, uGruposRoupas;
+type daoGruposRoupas = class( DAO )
+  private
+  protected
+  public
+    constructor crieObj;                              override;
+    function getDS : TObject;                         override;
+    function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
+    function salvar ( pObj : TObject ) : string;      override;
+    function excluir ( pObj : TObject ) : string;     override;
+    function carregar ( pObj : TObject ) : string;    override;
+    procedure setPosicao( acodigo : integer );
+    function VerificaExiste(aChave:string):Boolean;
+    function ValidaExclusao(pObj : TObject):Boolean; override;
+end;
+implementation
+uses
+  System.SysUtils;
+{ daoGruposRoupas }
+function daoGruposRoupas.carregar(pObj: TObject): string;
+var mGrupoRoupa : GruposRoupas;
+begin
+  mGrupoRoupa:= GruposRoupas( pObj );
+  mGrupoRoupa.setCodigo( aDM.QGruposRoupas.FieldByName('CODGRUPO').Value );
+  mGrupoRoupa.setGrupoRoupa( aDM.QGruposRoupas.FieldByName('GRUPOROUPA').AsString );
+  mGrupoRoupa.setDataCad( aDM.QGruposRoupas.FieldByName('DATACAD').AsDateTime);
+  mGrupoRoupa.setUltAlt( aDM.QGruposRoupas.FieldByName('ULTALT').AsDateTime);
+end;
+constructor daoGruposRoupas.crieObj;
+begin
+  inherited;
+end;
+function daoGruposRoupas.excluir(pObj: TObject): string;
+var
+  mGrupoRoupa : GruposRoupas;
+begin
+  aDM.Transacao.StartTransaction;
+  try
+    mGrupoRoupa  := GruposRoupas(pObj);
+    aDM.QGruposRoupas.Locate('CODGRUPO', mGrupoRoupa.getCodigo, []);
+    aDM.QGruposRoupas.Delete;
+    aDM.Transacao.Commit;
+//    Result := 'País excluído com sucesso!';
+  except
+    aDM.Transacao.Rollback;
+    Result := '';
+  end;
+end;
+function daoGruposRoupas.getDS: TObject;
+begin
+  Result:= aDM.DSGruposRoupas;
+end;
+function daoGruposRoupas.pesquisar(AFilter: TFilterSearch;
+  pChave: string): string;
+var msql : string;
+begin
+    msql:= 'SELECT * FROM GRUPOS_ROUPAS';
+    case AFilter.TipoConsulta of
+     TpCCodigo:
+     begin
+       msql:= 'SELECT * FROM GRUPOS_ROUPAS WHERE CODGRUPO =' + IntToStr( AFilter.Codigo );
+     end;
+     TpCParam:
+     begin
+       msql:= ( 'SELECT * FROM GRUPOS_ROUPAS WHERE GRUPOROUPA LIKE ' + QuotedStr( '%' + AFilter.Parametro + '%' ) );
+     end;
+     TpCTODOS:
+     begin
+       msql:= 'SELECT * FROM GRUPOS_ROUPAS ORDER BY CODGRUPO';
+     end;
+    end;
+    aDM.QGruposRoupas.Active:= false;
+    aDM.QGruposRoupas.SQL.Text:=msql;
+    aDM.QGruposRoupas.Open;
+    result:= '';
+end;
+function daoGruposRoupas.salvar(pObj: TObject): string;
+var mGrupoRoupa : GruposRoupas;
+begin
+  mGrupoRoupa:= GruposRoupas( pObj );
+  aDM.Transacao.StartTransaction;
+  try
+    if mGrupoRoupa.getCodigo = 0 then
+    begin
+       aDM.QGruposRoupas.Insert;
+       aDM.QGruposRoupas.FieldByName('DATACAD').AsDateTime:= now;
+    end
+    else
+       aDM.QGruposRoupas.Edit;
+    aDM.QGruposRoupas.FieldByName('CODGRUPO').AsInteger:= mGrupoRoupa.getCodigo;
+    aDM.QGruposRoupas.FieldByName('GRUPOROUPA').AsAnsiString:= mGrupoRoupa.getGrupoRoupa;
+    aDM.QGruposRoupas.FieldByName('ULTALT').AsDateTime:= now;
+    aDM.QGruposRoupas.Post;
+    aDM.Transacao.Commit;
+  except
+    aDM.Transacao.Rollback;
+  end;
+end;
+procedure daoGruposRoupas.setPosicao(acodigo: integer);
+begin
+  aDM.QGruposRoupas.Locate('CODGRUPO', aCodigo, []);
+end;
+
+function daoGruposRoupas.ValidaExclusao(pObj: TObject): Boolean;
+var
+  mGrupoRoupa : GruposRoupas;
+begin
+  mGrupoRoupa:= GruposRoupas(pObj);
+  Result := not(aDM.QRoupas.Locate('CODGRUPOROUPA', mGrupoRoupa.getCodigo, []));
+end;
+
+function daoGruposRoupas.VerificaExiste(aChave: string): Boolean;
+begin
+  Result := aDM.QGruposRoupas.Locate('GRUPOROUPA', aChave, []);
+end;
+
+end.
