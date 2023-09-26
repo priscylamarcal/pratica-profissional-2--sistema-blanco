@@ -212,7 +212,7 @@ procedure Tform_consulta_cidades.tipoFiltro;
 begin
   inherited;
   case combobox_tipo_filtro.ItemIndex of
-    0:  //c�digo
+    0:  //código
       begin
         edt_pesquisa.TextHint:= 'DIGITE AQUI PARA CONSULTAR POR CÓDIGO!';
         edt_pesquisa.NumbersOnly:= true;

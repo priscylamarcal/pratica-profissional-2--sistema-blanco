@@ -4,7 +4,7 @@ interface
 
 uses uController, uFilterSearch, uDaoClientes, uCtrlCidades,
   uCtrlCondicoesPagamentos, uCtrlFuncionarios, uCtrlTiposContatos, uClientes,
-  uFuncionarios;
+  uFuncionarios, uCtrlContatos;
 
 type
   ctrlClientes = class(Ctrl)
@@ -15,6 +15,7 @@ type
     aCtrlTiposContatos: ctrlTiposContatos;
     aCtrlFuncionarios: ctrlFuncionarios;
     aCtrlCondicoes: ctrlCondicoesPagamentos;
+    aCtrlContatos: ctrlContatos;
   public
     constructor crieObj; override;
     destructor destrua_se; override;
@@ -29,6 +30,7 @@ type
     procedure setCtrlTiposContatos(pCtrl: ctrlTiposContatos);
     procedure setCtrlFuncionarios(pCtrl: ctrlFuncionarios);
     procedure setCtrlCondicoes(pCtrl: ctrlCondicoesPagamentos);
+    procedure setCtrlContatos ( pCtrl : ctrlContatos );
     function getCtrlCidades: ctrlCidades;
     function getCtrlTiposContatos: ctrlTiposContatos;
     function getCtrlFuncionarios: ctrlFuncionarios;
@@ -47,7 +49,7 @@ function ctrlClientes.carregar(pObj: TObject): string;
 var
   mCliente: Clientes;
   mCidade: Cidades;
-  mContato: TiposContatos;
+  //mContato: TiposContatos;
   mCondicao: CondicoesPagamentos;
   mFuncionario: Funcionarios;
   AFilter: TFilterSearch;
@@ -57,15 +59,17 @@ begin
   aCtrlCidades.setPosicao(Clientes(pObj).getaCidade.GetCodigo);
   mCidade := Clientes(pObj).getaCidade;
   aCtrlCidades.carregar(TObject(mCidade));
-  aCtrlTiposContatos.setPosicao(Clientes(pObj).getoContato.GetCodigo);
-  mContato := Clientes(pObj).getoContato;
-  aCtrlTiposContatos.carregar(TObject(mContato));
+//  aCtrlTiposContatos.setPosicao(Clientes(pObj).getoContato.GetCodigo);
+//  mContato := Clientes(pObj).getoContato;
+//  aCtrlTiposContatos.carregar(TObject(mContato));
   aCtrlFuncionarios.setPosicao(Clientes(pObj).getoFuncionario.GetCodigo);
   mFuncionario := Clientes(pObj).getoFuncionario;
   aCtrlFuncionarios.carregar(TObject(mFuncionario));
   aCtrlCondicoes.setPosicao(Clientes(pObj).getaCondicao.GetCodigo);
   mCondicao := Clientes(pObj).getaCondicao;
   aCtrlCondicoes.carregar(TObject(mCondicao));
+  Clientes(pObj).setListaContatos(aCtrlContatos.RetornaListaContatos
+    (Clientes(pObj).getCodigo, 0));
 end;
 
 constructor ctrlClientes.crieObj;
@@ -80,7 +84,8 @@ end;
 
 function ctrlClientes.excluir(pObj: TObject): string;
 begin
-  result := aDaoClientes.excluir(pObj);
+  if aCtrlContatos.DeleteListaContatos(Funcionarios(pObj).getCodigo, 0) then
+    result := aDaoClientes.excluir(pObj);
 end;
 
 function ctrlClientes.getCtrlCidades: ctrlCidades;
@@ -115,7 +120,12 @@ end;
 
 function ctrlClientes.salvar(pObj: TObject): string;
 begin
-  aDaoClientes.salvar(pObj);
+  if aDaoClientes.salvar( pObj ) = 'SUCESSO' then
+  begin
+    aCtrlContatos.DeleteListaContatos(Clientes(pObj).getCodigo, 0);
+    Clientes(pObj).setCodigoListaContatos;
+    aCtrlContatos.salvarContato(Clientes(pObj).getListaContatos);
+  end;
 end;
 
 procedure ctrlClientes.setCtrlCidades(pCtrl: ctrlCidades);
@@ -126,6 +136,11 @@ end;
 procedure ctrlClientes.setCtrlCondicoes(pCtrl: ctrlCondicoesPagamentos);
 begin
   aCtrlCondicoes := pCtrl;
+end;
+
+procedure ctrlClientes.setCtrlContatos(pCtrl: ctrlContatos);
+begin
+  aCtrlContatos := pCtrl;
 end;
 
 procedure ctrlClientes.setCtrlFuncionarios(pCtrl: ctrlFuncionarios);

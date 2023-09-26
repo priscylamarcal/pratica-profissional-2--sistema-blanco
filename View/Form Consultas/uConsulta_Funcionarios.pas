@@ -47,8 +47,8 @@ begin
   aCtrlFuncionarios.carregar( oFuncionario );
   oCadastroFuncionarios.conhecaObj( aCtrlFuncionarios, oFuncionario );
 
-  oCadastroFuncionarios.btn_remover_item.Enabled:= False;
-  oCadastroFuncionarios.btn_botao_alterar_item.Enabled:= False;
+  //oCadastroFuncionarios.btn_remover_item.Enabled:= False;
+  //oCadastroFuncionarios.btn_botao_alterar_item.Enabled:= False;
 
   oCadastroFuncionarios.Caption:= 'Alteração de Funcionário';
 
@@ -108,7 +108,6 @@ begin
   inherited;
   oFuncionario.limparDados;
   oCadastroFuncionarios.conhecaObj( aCtrlFuncionarios, oFuncionario );
-  oCadastroFuncionarios.ListView1.Clear;
   oCadastroFuncionarios.limpaEdt;
   oCadastroFuncionarios.limparItens;
 

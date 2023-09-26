@@ -1,15 +1,18 @@
 unit uDaoRoupas;
 interface
 uses uDAO, uFilterSearch, uGruposRoupas, uMarcas, uCores, uTamanhos,
-  uFornecedores, uColecoes, uRoupas;
+  uFornecedores, uColecoes, uRoupas, Vcl.ComCtrls,
+ Data.DB,   FireDAC.Comp.Client;
+
 type daoRoupas = class( DAO )
   private
+    function RetornaCodInserido:Integer;
   protected
   public
     constructor crieObj;                              override;
     function getDS : TObject;                         override;
     function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
-    function salvar ( pObj : TObject ) : string;      override;
+    function salvar (  pObj : TObject ) : string;      override;
     function excluir ( pObj : TObject ) : string;     override;
     function carregar ( pObj : TObject ) : string;    override;
 end;
@@ -49,6 +52,7 @@ begin
   mRoupa.getoFornecedor.setNomeRazaoSocial( aDM.QRoupas.FieldByName('FORNECEDOR').AsString );
   mRoupa.getaColecao.setCodigo( aDM.QRoupas.FieldByName('CODCOLECAO').Value );
   mRoupa.getaColecao.setColecao( aDM.QRoupas.FieldByName('COLECAO').AsString );
+  mRoupa.setUnidadeMedida( aDM.QRoupas.FieldByName('UNIDADE_MEDIDA').Value );
 end;
 constructor daoRoupas.crieObj;
 begin
@@ -97,7 +101,32 @@ begin
     aDM.QRoupas.Open;
     result:= '';
 end;
-function daoRoupas.salvar(pObj: TObject): string;
+function daoRoupas.RetornaCodInserido: Integer;
+const
+  SQL =//consulta que retorna qual a posição atual do generator da tabela
+    'select gen_id(gen_Roupas, 0) as new_id from rdb$database';
+var
+  aQuery : TFDQuery;
+begin
+  aQuery := TFDQuery.Create(nil);
+  try
+    aQuery.Connection  := aDM.Conexao;
+    aQuery.Transaction := aDM.Transacao;
+    if aQuery.Active then
+      aQuery.Close;
+    aQuery.SQL.Clear;
+    aQuery.SQL.Add(SQL);
+    aQuery.Open;
+    if not(aQuery.IsEmpty) then
+      Result := aQuery.FieldByName('NEW_ID').AsInteger
+    else
+      Result := 0;
+  finally
+    FreeAndNil(aQuery);
+  end;
+end;
+
+function daoRoupas.salvar( pObj: TObject): string;
 var mRoupa : Roupas; mGrupoRoupa : GruposRoupas; mMarca : Marcas; mCor : Cores;
     mTamanho : Tamanhos; mFornecedor : Fornecedores; mColecao : Colecoes;
 begin
@@ -137,8 +166,12 @@ begin
     aDM.QRoupas.FieldByName('FORNECEDOR').AsString := mFornecedor.getNomeRazaoSocial;
     aDM.QRoupas.FieldByName('CODCOLECAO').AsInteger:= mColecao.getCodigo;
     aDM.QRoupas.FieldByName('COLECAO').AsString := mColecao.getColecao;
+    aDM.QRoupas.FieldByName('UNIDADE_MEDIDA').AsString:= mRoupa.getUnidadeMedida;
     aDM.QRoupas.Post;
     aDM.Transacao.Commit;
+    result := 'SUCESSO';
+    if  mRoupa.getCodigo = 0 then
+      mRoupa.setCodigo( Self.RetornaCodInserido);
   except
     aDM.Transacao.Rollback;
   end;

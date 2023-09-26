@@ -1,9 +1,10 @@
 unit uDaoFornecedores;
 interface
 uses uDAO, uFilterSearch, uFornecedores, uCidades, uTiposContatos,
-  uCondicoesPagamentos;
+  uCondicoesPagamentos, Data.DB, FireDAC.Comp.Client;
 type daoFornecedores = class( DAO )
   private
+    function RetornaCodInserido:Integer;
   protected
   public
     constructor crieObj;                              override;
@@ -15,6 +16,7 @@ type daoFornecedores = class( DAO )
 
     procedure setPosicao(aCodigo: integer);
     function VerificaExiste(oFornecedor: Fornecedores):Boolean;
+
 end;
 implementation
 uses
@@ -26,7 +28,7 @@ var mFornecedor : Fornecedores; mCidade : Cidades; mContato : TiposContatos;
 begin
   mFornecedor:= Fornecedores( pObj );
   mCidade:= mFornecedor.getaCidade;
-  mContato:= mFornecedor.getoContato;
+ // mContato:= mFornecedor.getoContato;
   mCondicao:= mFornecedor.getaCondicao;
   mFornecedor.setCodigo( aDM.QFornecedores.FieldByName('CODFORN').Value );
   mFornecedor.setDataCad( aDM.QFornecedores.FieldByName('DATACAD').AsDateTime );
@@ -40,8 +42,8 @@ begin
   mFornecedor.setComplemento( aDM.QFornecedores.FieldByName('COMPLEMENTO').AsString );
   mFornecedor.setBairro( aDM.QFornecedores.FieldByName('BAIRRO').AsString );
   mFornecedor.setCep( aDM.QFornecedores.FieldByName('CEP').AsString );
-  mFornecedor.setContatoAux1( aDM.QFornecedores.FieldByName('CONTATO_AUX1').AsString );
-  mFornecedor.setContatoAux2( aDM.QFornecedores.FieldByName('CONTATO_AUX2').AsString );
+//  mFornecedor.setContatoAux1( aDM.QFornecedores.FieldByName('CONTATO_AUX1').AsString );
+//  mFornecedor.setContatoAux2( aDM.QFornecedores.FieldByName('CONTATO_AUX2').AsString );
   mFornecedor.setCnpjCpf( aDM.QFornecedores.FieldByName('CNPJ_CPF').AsString );
   mFornecedor.setIeRg( aDM.QFornecedores.FieldByName('IE_RG').AsString );
   mFornecedor.setTipoForn( aDM.QFornecedores.FieldByName('TIPO_FORN').AsString );
@@ -49,8 +51,8 @@ begin
   mFornecedor.getaCidade.setCidade(aDM.QFornecedores.FieldByName('CIDADE').AsString );
 //  mFornecedor.getaCidade.getoEstado.setCodigo(aDM.QFornecedores.FieldByName('CODESTADO').Value );
   mFornecedor.getaCidade.getoEstado.setUF(aDM.QFornecedores.FieldByName('UF').AsString );
-  mFornecedor.getoContato.setCodigo(aDM.QFornecedores.FieldByName('CODCONTATO').Value );
-  mFornecedor.getoContato.setTipoContato(aDM.QFornecedores.FieldByName('CONTATO').AsString );
+//  mFornecedor.getoContato.setCodigo(aDM.QFornecedores.FieldByName('CODCONTATO').Value );
+//  mFornecedor.getoContato.setTipoContato(aDM.QFornecedores.FieldByName('CONTATO').AsString );
   mFornecedor.getaCondicao.setCodigo(aDM.QFornecedores.FieldByName('CODCONDICAO').Value );
   mFornecedor.getaCondicao.setCondicao(aDM.QFornecedores.FieldByName('CONDICAO').AsString );
   mFornecedor.setObs(aDM.QFornecedores.FieldByName('Obs').AsString );
@@ -104,13 +106,38 @@ begin
     aDM.QFornecedores.Open;
     result:= '';
 end;
+function daoFornecedores.RetornaCodInserido: Integer;
+const
+  SQL =//consulta que retorna qual a posição atual do generator da tabela
+    'select gen_id(gen_Fornecedor, 0) as new_id from rdb$database';
+var
+  aQuery : TFDQuery;
+begin
+  aQuery := TFDQuery.Create(nil);
+  try
+    aQuery.Connection  := aDM.Conexao;
+    aQuery.Transaction := aDM.Transacao;
+    if aQuery.Active then
+      aQuery.Close;
+    aQuery.SQL.Clear;
+    aQuery.SQL.Add(SQL);
+    aQuery.Open;
+    if not(aQuery.IsEmpty) then
+      Result := aQuery.FieldByName('NEW_ID').AsInteger
+    else
+      Result := 0;
+  finally
+    FreeAndNil(aQuery);
+  end;
+end;
+
 function daoFornecedores.salvar(pObj: TObject): string;
 var mFornecedor : Fornecedores; mCidade : Cidades; mContato : TiposContatos;
     mCondicao : CondicoesPagamentos;
 begin
   mFornecedor:= Fornecedores( pObj );
   mCidade:= mFornecedor.getaCidade;
-  mContato:= mFornecedor.getoContato;
+  //mContato:= mFornecedor.getoContato;
   mCondicao:= mFornecedor.getaCondicao;
   aDM.Transacao.StartTransaction;
   try
@@ -131,8 +158,8 @@ begin
     aDM.QFornecedores.FieldByName('COMPLEMENTO').AsString:= mFornecedor.getComplemento;
     aDM.QFornecedores.FieldByName('BAIRRO').AsString:= mFornecedor.getBairro;
     aDM.QFornecedores.FieldByName('CEP').AsString:= mFornecedor.getCep;
-    aDM.QFornecedores.FieldByName('CONTATO_AUX1').AsString:= mFornecedor.getContatoAux1;
-    aDM.QFornecedores.FieldByName('CONTATO_AUX2').AsString:= mFornecedor.getContatoAux2;
+    //aDM.QFornecedores.FieldByName('CONTATO_AUX1').AsString:= mFornecedor.getContatoAux1;
+    //aDM.QFornecedores.FieldByName('CONTATO_AUX2').AsString:= mFornecedor.getContatoAux2;
     aDM.QFornecedores.FieldByName('CNPJ_CPF').AsString:= mFornecedor.getCnpjCpf;
     aDM.QFornecedores.FieldByName('IE_RG').AsString:= mFornecedor.getIeRg;
     aDm.QFornecedores.FieldByName('TIPO_FORN').AsString:= mFornecedor.getTipoForn;
@@ -141,14 +168,15 @@ begin
     aDM.QFornecedores.FieldByName('CIDADE').AsString:= mCidade.getCidade;
 //    aDM.QFornecedores.FieldByName('CODESTADO').AsInteger:= mCidade.getoEstado.getCodigo;
     aDM.QFornecedores.FieldByName('UF').AsString:= mCidade.getoEstado.getUF;
-    aDM.QFornecedores.FieldByName('CODCONTATO').AsInteger:= mContato.getCodigo;
-    aDM.QFornecedores.FieldByName('CONTATO').AsString:= mContato.getTipoContato;
     aDM.QFornecedores.FieldByName('CODCONDICAO').AsInteger:= mCondicao.getCodigo;
     aDM.QFornecedores.FieldByName('CONDICAO').AsString:= mCondicao.getCondicao;
     aDM.QFornecedores.FieldByName('OBS').AsString:= mFornecedor.getObs;
     aDM.QFornecedores.FieldByName('DATA').AsDateTime:= mFornecedor.getData;
     aDM.QFornecedores.Post;
     aDM.Transacao.Commit;
+    result := 'SUCESSO';
+    if  mFornecedor.getCodigo = 0 then
+      mFornecedor.setCodigo( Self.RetornaCodInserido);
   except
     aDM.Transacao.Rollback;
   end;

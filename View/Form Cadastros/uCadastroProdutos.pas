@@ -8,7 +8,7 @@ uses
   campoEdit, Vcl.ExtCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, Vcl.Imaging.pngimage,
   Vcl.ComCtrls, uRoupas, uCtrlRoupas, uConsulta_Colecoes, uConsulta_Cores,
   uConsulta_Fornecedores, uConsulta_GruposProdutos, uConsulta_Marcas,
-  uConsulta_Tamanhos;
+  uConsulta_Tamanhos, Datasnap.DBClient, uVariacoesRoupas;
 
 type
   Tform_cadastro_produtos = class(Tform_cadastro_pai)
@@ -55,7 +55,6 @@ type
     lbl_colecao: TLabel;
     lbl_observacoes: TLabel;
     memo_obs: TMemo;
-    ListView1: TListView;
     lbl_cod_grupo_produto: TLabel;
     edt_cod_grupo_produto: PriTEdit;
     lbl_cod_marca: TLabel;
@@ -71,15 +70,24 @@ type
     pbl_limpar_grid: TPanel;
     btn_limpar_grid: TSpeedButton;
     pnl_botao_excluir_item: TPanel;
-    btn_botao_excluir_item: TSpeedButton;
+    btn_botao_excluir_variacao: TSpeedButton;
     pnl_botao_alterar: TPanel;
-    btn_botao_alterar_item: TSpeedButton;
+    btn_botao_alterar_variacao: TSpeedButton;
     pnl_adicionar_contato: TPanel;
-    btn_adicionar_contato: TSpeedButton;
+    btn_adicionar_variacao: TSpeedButton;
     edt_unidade_medida: PriTEdit;
     lbl_unidade_medida: TLabel;
     edt_codigo_roupa: PriTEdit;
     lbl_codigo_roupa: TLabel;
+    GridVariacoes: TDBGrid;
+    dsVariacoes: TDataSource;
+    cdsVariacoes: TClientDataSet;
+    cdsVariacoesnum_variacao: TIntegerField;
+    cdsVariacoesid_cor: TIntegerField;
+    cdsVariacoescor: TStringField;
+    cdsVariacoesid_tamanho: TIntegerField;
+    cdsVariacoestamanho: TStringField;
+    cdsVariacoescodigo: TStringField;
     procedure btn_pesquisa_grupoProdutoClick(Sender: TObject);
     procedure btn_pesquisa_marcaClick(Sender: TObject);
     procedure btn_pesquisa_corClick(Sender: TObject);
@@ -87,12 +95,19 @@ type
     procedure btn_pesquisaClick(Sender: TObject);
     procedure btn_pesquisa_colecaoClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure edt_valor_custoChange(Sender: TObject);
+    procedure edt_lucroChange(Sender: TObject);
+    procedure btn_adicionar_variacaoClick(Sender: TObject);
+    procedure btn_botao_alterar_variacaoClick(Sender: TObject);
+    procedure btn_botao_excluir_variacaoClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
 
   private
     { Private declarations }
 
     aRoupa : Roupas;
     aCtrlRoupas : ctrlRoupas;
+    Alterar: boolean;
 
     aConsultaGruposProdutos : Tform_consulta_grupos_produtos;
     aConsultaMarcas : Tform_consulta_marcas;
@@ -100,6 +115,7 @@ type
     aConsultaTamanhos : Tform_consulta_tamanhos;
     aConsultaFornecedores : Tform_consulta_fornecedores;
     aConsultaColecoes : Tform_consulta_colecoes;
+    procedure AtualizarContagem;
   public
     { Public declarations }
     procedure conhecaObj ( pCtrl, pObj : TObject );  override;
@@ -121,9 +137,15 @@ type
     procedure setFrmConsultaFornecedores ( pConsulta : TObject );
     procedure setFrmConsultaColecoes ( pConsulta : TObject );
 
-    procedure adicionarItens;
+    procedure adicionarItens(pEdit: boolean);
     procedure limparItens;
-    function validaItens : Boolean;
+    procedure AlterarItem;
+    procedure ExcluirItem;
+    procedure bloquearItens(pBloq: boolean);
+    procedure ExcluirColuna(pColuna: string);
+    procedure AdicionarColuna(pColuna: string);
+
+    procedure calculaValorVenda;
   end;
 
 var
@@ -135,9 +157,107 @@ implementation
 
 { Tform_cadastro_produtos }
 
-procedure Tform_cadastro_produtos.adicionarItens;
+procedure Tform_cadastro_produtos.AdicionarColuna(pColuna: string);
+var i: integer;
+    Existe: boolean;
+    Col: TColumn;
 begin
+    existe := False;
+    for I := 0 to GridVariacoes.Columns.Count - 1 do
+    begin
+       existe := GridVariacoes.Columns[i].Title.Caption = pColuna;
+       if existe then
+          break
+    end;
 
+    if not Existe then
+    begin
+       Col := GridVariacoes.Columns.Add;
+       Col.Title.Caption := pColuna;
+    end;
+
+end;
+
+procedure Tform_cadastro_produtos.adicionarItens( pEdit: boolean);
+  function validaItens: Boolean;
+  begin
+    result := false;
+
+    if (Self.edt_cod_cor.Text = '') or (Self.edt_pesquisar_cor.text = '') then
+    begin
+      MessageDlg( 'Selecione a cor da variação!', MtInformation, [ MbOK ], 0 );
+      Exit;
+    end;
+
+    if (Self.edt_cod_tamanho.Text = '') or (Self.edt_pesquisar_tamanho.text = '') then
+    begin
+      MessageDlg( 'Selecione o tamanho da variação!', MtInformation, [ MbOK ], 0 );
+      Exit;
+    end;
+
+    if (Self.edt_codigo_roupa.Text = '') then
+    begin
+      MessageDlg( 'O campo código é obrigatório!', MtInformation, [ MbOK ], 0 );
+      Self.edt_codigo_roupa.setFocus;
+      Exit;
+    end;
+
+    result := true;
+  end;
+
+begin
+   if validaItens then
+   begin
+      if pEdit then
+      begin
+        cdsVariacoes.Edit;
+        cdsVariacoesNUM_VARIACAO.AsInteger := cdsVariacoes.RecNo;
+      end
+      else
+      begin
+        cdsVariacoes.Append;
+        cdsVariacoesNUM_VARIACAO.AsInteger := cdsVariacoes.RecordCount + 1;
+      end;
+
+      cdsVariacoesID_COR.AsInteger := StrToInt(edt_cod_cor.text);
+      cdsVariacoesCOR.AsString := edt_pesquisar_cor.text;
+      cdsVariacoesID_TAMANHO.AsInteger := StrToInt(edt_cod_tamanho.text);
+      cdsVariacoesTAMANHO.asString := edt_pesquisar_tamanho.text;
+      cdsVariacoesCODIGO.asString := edt_codigo_roupa.text;
+      cdsVariacoes.Post;
+      adicionarColuna(edt_pesquisar_tamanho.text);
+      limparItens;
+   end
+end;
+
+procedure Tform_cadastro_produtos.AlterarItem;
+begin
+   if cdsVariacoes.RecordCount > 0 then
+   begin
+      if Alterar then
+      begin
+        edt_cod_cor.text := IntToStr(cdsVariacoesID_COR.AsInteger);
+        edt_pesquisar_cor.text := cdsVariacoesCOR.AsString;
+        edt_cod_tamanho.text := InttoStr(cdsVariacoesID_TAMANHO.AsInteger);
+        edt_pesquisar_tamanho.text := cdsVariacoesTAMANHO.asString;
+        edt_codigo_roupa.text := cdsVariacoesCODIGO.asString;
+        alterar := false;
+      end
+      else
+      begin
+        ExcluirColuna(cdsVariacoes.FieldByName('tamanho').AsString);
+        adicionarItens(true);
+        alterar := true;
+      end;
+      bloquearItens(alterar);
+   end
+   else
+     MessageDlg( 'Lista de variações está vazia!', MtInformation, [ MbOK ], 0 );
+end;
+
+procedure Tform_cadastro_produtos.AtualizarContagem;
+begin
+  Self.edt_quant_total_produtos.Text := IntToStr(cdsVariacoes.RecordCount - 1);
 end;
 
 procedure Tform_cadastro_produtos.bloqueaiaBtnPesquisa;
@@ -149,10 +269,17 @@ begin
   self.btn_pesquisa.Visible:= False;
   self.btn_pesquisa_colecao.Visible:= False;
 
-  self.btn_adicionar_contato.Enabled:= False;
-  self.btn_botao_alterar_item.Enabled:= False;
-  self.btn_botao_excluir_item.Enabled:= False;
+  self.btn_adicionar_variacao.Enabled:= False;
+  self.btn_botao_alterar_variacao.Enabled:= False;
+  self.btn_botao_excluir_variacao.Enabled:= False;
   self.btn_limpar_grid.Enabled:= False;
+end;
+
+procedure Tform_cadastro_produtos.bloquearItens(pBloq: boolean);
+begin
+  GridVariacoes.Enabled := pBloq;
+  btn_adicionar_variacao.Enabled := pBloq;
+  btn_botao_excluir_variacao.Enabled := pBloq;
 end;
 
 procedure Tform_cadastro_produtos.bloqueiaEdt;
@@ -177,6 +304,31 @@ begin
   self.edt_cod_colecao.Enabled:= False;
   self.edt_colecao.Enabled:= False;
   self.memo_obs.Enabled:= False;
+  self.edt_unidade_medida.Enabled:= False;
+  self.edt_codigo_roupa.Enabled:= False;
+end;
+
+procedure Tform_cadastro_produtos.btn_adicionar_variacaoClick(Sender: TObject);
+begin
+  inherited;
+  adicionarItens(false);
+  AtualizarContagem;
+end;
+
+procedure Tform_cadastro_produtos.btn_botao_alterar_variacaoClick(
+  Sender: TObject);
+begin
+  inherited;
+  AlterarItem;
+end;
+
+procedure Tform_cadastro_produtos.btn_botao_excluir_variacaoClick(
+  Sender: TObject);
+begin
+  inherited;
+  ExcluirColuna(cdsVariacoes.FieldByName('tamanho').AsString);
+  ExcluirItem;
+  AtualizarContagem;
 end;
 
 procedure Tform_cadastro_produtos.btn_pesquisaClick(Sender: TObject);
@@ -246,7 +398,19 @@ begin
   self.edt_pesquisar_tamanho.Text:= aRoupa.getoTamanho.getSiglaTamanho;
 end;
 
+procedure Tform_cadastro_produtos.calculaValorVenda;
+var valorCusto, lucro: currency;
+begin
+  if (Self.edt_valor_custo.text <> '') and (Self.edt_lucro.text <> '') then
+  begin
+    valorCusto := StrtoFloat(Self.edt_valor_custo.text);
+    lucro      := StrtoFloat(Self.edt_lucro.text);
+    Self.edt_valor_venda.Text := FloatToStr(valorCusto + (valorCusto * lucro / 100));
+  end;
+end;
+
 procedure Tform_cadastro_produtos.carregaEdt;
+var variacao: VariacaoRoupa;
 begin
   inherited;
 
@@ -263,10 +427,10 @@ begin
   self.edt_valor_custo.Text:= FloatToStr( aRoupa.getCustoUnitario );
   self.edt_lucro.Text:= FloatToStr( aRoupa.getLucro );
   self.edt_valor_venda.Text:= FloatToStr( aRoupa.getValorVenda );
-  self.edt_cod_cor.Text:= IntToStr( aRoupa.getaCor.getCodigo );
-  self.edt_pesquisar_cor.Text:= aRoupa.getaCor.getCor;
-  self.edt_cod_tamanho.Text:= IntToStr( aRoupa.getoTamanho.getCodigo );
-  self.edt_pesquisar_tamanho.Text:= aRoupa.getoTamanho.getSiglaTamanho;
+  //self.edt_cod_cor.Text:= IntToStr( aRoupa.getaCor.getCodigo );
+  //self.edt_pesquisar_cor.Text:= aRoupa.getaCor.getCor;
+  //self.edt_cod_tamanho.Text:= IntToStr( aRoupa.getoTamanho.getCodigo );
+  //self.edt_pesquisar_tamanho.Text:= aRoupa.getoTamanho.getSiglaTamanho;
   self.edt_cod_fornecedor.Text:= IntToStr( aRoupa.getoFornecedor.getCodigo );
   self.edt_pesquisar_registro.Text:= aRoupa.getoFornecedor.getNomeRazaoSocial;
   self.edt_cod_colecao.Text:= IntToStr( aRoupa.getaColecao.getCodigo );
@@ -274,6 +438,22 @@ begin
   self.memo_obs.Text:= aRoupa.getObs;
   self.edt_data_cadastro.Text:= DateToStr( aRoupa.getDataCad);
   self.edt_data_ult_alt.Text:= DateToStr(aRoupa.getUltAlt);
+  self.edt_unidade_medida.text  := aRoupa.getUnidadeMedida;
+
+  for Variacao in aRoupa.getListaVariacao do
+  begin
+    AdicionarColuna(Variacao.getaTamanho.getSiglaTamanho);
+    cdsVariacoes.Append;
+    cdsVariacoes.FieldByName('Num_variacao').AsInteger := Variacao.getaNumeroVariacao;
+    cdsVariacoes.FieldByName('id_cor').AsInteger       := Variacao.getaCor.getCodigo;
+    cdsVariacoes.FieldByName('cor').AsString           := Variacao.getaCor.getCor;
+    cdsVariacoes.FieldByName('id_tamanho').AsInteger   := Variacao.getaTamanho.getCodigo;
+    cdsVariacoes.FieldByName('tamanho').AsString       := Variacao.getaTamanho.getSiglaTamanho;
+    cdsVariacoes.FieldByName('codigo').AsString        := Variacao.getacodigoVariacao;
+    cdsVariacoes.Post;
+  end;
+  cdsVariacoes.First;
+  cdsVariacoes.EnableControls;
 end;
 
 procedure Tform_cadastro_produtos.conhecaObj(pCtrl, pObj: TObject);
@@ -295,9 +475,9 @@ begin
   self.btn_pesquisa.Visible:= True;
   self.btn_pesquisa_colecao.Visible:= True;
 
-  self.btn_adicionar_contato.Enabled:= True;
-  self.btn_botao_alterar_item.Enabled:= True;
-  self.btn_botao_excluir_item.Enabled:= True;
+  self.btn_adicionar_variacao.Enabled:= True;
+  self.btn_botao_alterar_variacao.Enabled:= True;
+  self.btn_botao_excluir_variacao.Enabled:= True;
   self.btn_limpar_grid.Enabled:= True;
 end;
 
@@ -323,6 +503,66 @@ begin
   self.edt_cod_colecao.Enabled:= True;
   self.edt_colecao.Enabled:= True;
   self.memo_obs.Enabled:= True;
+  self.edt_unidade_medida.Enabled:= True;
+  self.edt_codigo_roupa.Enabled:= True;
+end;
+
+procedure Tform_cadastro_produtos.edt_lucroChange(Sender: TObject);
+begin
+  //inherited;
+  calculaValorVenda;
+end;
+
+procedure Tform_cadastro_produtos.edt_valor_custoChange(Sender: TObject);
+begin
+  //inherited;
+  calculaValorVenda;
+end;
+
+procedure Tform_cadastro_produtos.ExcluirColuna(pColuna: string);
+var i: integer;
+//    existe: boolean;
+    ExisteQtd: integer;
+    col : TColumn;
+begin
+   cdsVariacoes.First;
+   ExisteQtd := 0;
+   for I := 0 to cdsVariacoes.RecordCount - 1 do
+   begin
+      if cdsVariacoes.FieldByName('tamanho').AsString = pColuna then
+      begin
+        ExisteQtd := ExisteQtd + 1;
+      end;
+      cdsVariacoes.next;
+   end;
+
+   if not (ExisteQtd > 1) then
+   begin
+      for I := 0 to GridVariacoes.Columns.Count - 1 do
+      begin
+         col := GridVariacoes.Columns[I];
+         if col.Title.Caption = pColuna then
+            GridVariacoes.Columns[I].Free;
+      end;
+   end;
+end;
+
+procedure Tform_cadastro_produtos.ExcluirItem;
+var i: integer;
+begin
+  if cdsVariacoes.RecordCount > 0 then
+  begin
+    cdsVariacoes.Delete;
+    cdsVariacoes.First;
+    for I := 0 to cdsVariacoes.RecordCount - 1 do
+    begin
+      cdsVariacoes.edit;
+      cdsVariacoesNUM_VARIACAO.AsInteger := I+1;
+      cdsVariacoes.post;
+    end;
+  end
+  else
+    MessageDlg( 'Lista de variações está vazia!', MtInformation, [ MbOK ], 0 );
 end;
 
 procedure Tform_cadastro_produtos.FormActivate(Sender: TObject);
@@ -330,6 +570,15 @@ begin
   inherited;
   if Self.btn_botao_salvar.Caption='Salvar' then
      edt_descricao_produto.SetFocus;
+end;
+
+procedure Tform_cadastro_produtos.FormCreate(Sender: TObject);
+begin
+  inherited;
+  if cdsVariacoes.Active then
+    cdsVariacoes.Close;
+  cdsVariacoes.Open;
+  cdsVariacoes.EmptyDataSet;
 end;
 
 procedure Tform_cadastro_produtos.limpaEdt;
@@ -356,11 +605,19 @@ begin
   self.memo_obs.Clear;
   Self.edt_data_cadastro.Clear;
   self.edt_data_ult_alt.Clear;
+  Self.cdsVariacoes.EmptyDataSet;
+  Alterar := true;
+  self.edt_unidade_medida.Clear;
+  self.edt_codigo_roupa.Clear;
 end;
 
 procedure Tform_cadastro_produtos.limparItens;
 begin
-
+  self.edt_cod_cor.clear;
+  Self.edt_pesquisar_cor.clear;
+  self.edt_cod_tamanho.clear;
+  self.edt_pesquisar_tamanho.clear;
+  self.edt_codigo_roupa.clear;
 end;
 
 procedure Tform_cadastro_produtos.sair;
@@ -370,6 +627,7 @@ begin
 end;
 
 procedure Tform_cadastro_produtos.salvar;
+var variacao: VariacaoRoupa;
 begin
   inherited;
   if validaFormulario then
@@ -390,22 +648,44 @@ begin
       aRoupa.setLucro( StrToFloat ( self.edt_lucro.Text ) );
       aRoupa.setValorVenda( StrToFloat ( self.edt_valor_venda.Text ) );
 
-      aRoupa.getaCor.setCodigo( StrToInt ( self.edt_cod_cor.Text ) );
-      aRoupa.getaCor.setCor( self.edt_pesquisar_cor.Text );
+//      aRoupa.getaCor.setCodigo( StrToInt ( self.edt_cod_cor.Text ) );
+//      aRoupa.getaCor.setCor( self.edt_pesquisar_cor.Text );
 
-      aRoupa.getoTamanho.setCodigo( StrToInt ( self.edt_cod_tamanho.Text ) );
-      aRoupa.getoTamanho.setSiglaTamanho( self.edt_pesquisar_tamanho.Text );
+//      aRoupa.getoTamanho.setCodigo( StrToInt ( self.edt_cod_tamanho.Text ) );
+//      aRoupa.getoTamanho.setSiglaTamanho( self.edt_pesquisar_tamanho.Text );
 
       aRoupa.getoFornecedor.setCodigo( StrToInt ( self.edt_cod_fornecedor.Text ) );
 
       aRoupa.getoFornecedor.setNomeRazaoSocial( self.edt_pesquisar_registro.Text );
       aRoupa.getaColecao.setCodigo( StrToInt ( self.edt_cod_colecao.Text ) );
       aRoupa.getaColecao.setColecao( self.edt_colecao.Text );
+      aRoupa.setUnidadeMedida(edt_unidade_medida.text);
 
       aRoupa.setObs( self.memo_obs.Text );
 //      aRoupa.setDataCad( Date );
 //      aRoupa.setUltAlt( Date );
       aRoupa.setCodUsu( StrToInt ( Self.edt_cod_usuario.Text ) );
+
+      cdsVariacoes.DisableControls;
+      aRoupa.getListaVariacao.Clear;
+      try
+        cdsVariacoes.First;
+        while not(cdsVariacoes.Eof) do
+          begin
+            variacao := VariacaoRoupa.crieObj;
+            with variacao, cdsVariacoes do
+              begin
+                setNumeroVariacao(FieldByName('num_variacao').AsInteger);
+                getaCor.setCodigo(FieldByName('id_cor').AsInteger);
+                getaTamanho.setCodigo(FieldByName('id_tamanho').AsInteger);
+                SetCodigovariacao( FieldByName('codigo').Asstring);
+              end;
+            aRoupa.getListaVariacao.Add(variacao);
+            cdsVariacoes.Next;
+          end;
+      finally
+        cdsVariacoes.EnableControls;
+      end;
 
       if self.btn_botao_salvar.Caption = 'Salvar' then
          aCtrlRoupas.salvar( aRoupa.clone )
@@ -472,6 +752,20 @@ begin
     Exit;
   end;
 
+  if Self.edt_unidade_medida.Text = '' then
+  begin
+    MessageDlg( 'O campo Unidade de Medida é obrigatório!', MtInformation, [ MbOK ], 0 );
+    edt_unidade_medida.SetFocus;
+    Exit;
+  end;
+
+  if Self.edt_pesquisar_grupoProduto_produto.Text = '' then
+  begin
+    MessageDlg( 'O campo Grupo de Produtos é obrigatório!', MtInformation, [ MbOK ], 0 );
+    edt_pesquisar_grupoProduto_produto.SetFocus;
+    Exit;
+  end;
+
   if Self.edt_pesquisar_marca_produto.Text = '' then
   begin
     MessageDlg( 'O campo Marca é obrigatório!', MtInformation, [ MbOK ], 0 );
@@ -493,6 +787,12 @@ begin
     Exit;
   end;
 
+  if cdsVariacoes.IsEmpty then
+  begin
+    MessageDlg( 'Insira ao menos uma variação da Roupa!', MtInformation, [ MbOK ], 0 );
+    Exit;
+  end;
+
   if Self.edt_pesquisar_registro.Text = '' then
   begin
     MessageDlg( 'O campo Fornecedor é obrigatório!', MtInformation, [ MbOK ], 0 );
@@ -500,12 +800,16 @@ begin
     Exit;
   end;
 
+  if Self.edt_colecao.Text = '' then
+  begin
+    MessageDlg( 'O campo Coleção é obrigatório!', MtInformation, [ MbOK ], 0 );
+    edt_colecao.SetFocus;
+    Exit;
+  end;
+
  Result:= true;
 end;
 
-function Tform_cadastro_produtos.validaItens: Boolean;
-begin
 
-end;
 
 end.

@@ -226,6 +226,27 @@ type
     DSParcelas: TDataSource;
     QFornecedoresOBS: TStringField;
     QFornecedoresDATA: TSQLTimeStampField;
+    QVariacoesRoupas: TFDQuery;
+    DSVariacoesRoupas: TDataSource;
+    QParcelasCOD_COND_PGTO: TIntegerField;
+    QParcelasNUMERO_PARCELA: TIntegerField;
+    QParcelasDIAS: TIntegerField;
+    QParcelasPERCENTUAL: TSingleField;
+    QParcelasCOD_FORMA_PGTO: TIntegerField;
+    QVariacoesRoupasCOD_ROUPA: TIntegerField;
+    QVariacoesRoupasNUMERO_VARIACAO: TIntegerField;
+    QVariacoesRoupasCOD_COR: TIntegerField;
+    QVariacoesRoupasCOD_TAMANHO: TIntegerField;
+    QVariacoesRoupasCODIGO: TStringField;
+    QRoupasUNIDADE_MEDIDA: TStringField;
+    QContatos: TFDQuery;
+    DSContatos: TDataSource;
+    QContatosCOD_PORTADOR: TIntegerField;
+    QContatosCOD_TIPO_PORTADOR: TIntegerField;
+    QContatosCOD_TIPO_CONTATO: TIntegerField;
+    QContatosDESCRICAO: TStringField;
+    QContatosNUM_CONTATO: TIntegerField;
+    QContatosOBSERVACAO: TStringField;
   private
     { Private declarations }
   public

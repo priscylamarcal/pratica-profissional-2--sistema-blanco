@@ -3,6 +3,8 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
   ClientHeight = 744
   ClientWidth = 924
   OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   ExplicitWidth = 940
   ExplicitHeight = 783
   PixelsPerInch = 96
@@ -295,11 +297,11 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         ParentFont = False
       end
       object lbl_condicao_pagamento: TLabel [24]
-        Left = 112
-        Top = 64
-        Width = 138
+        Left = 106
+        Top = 66
+        Width = 150
         Height = 16
-        Caption = 'Condi'#231#227'o de Pagamento'
+        Caption = 'Condi'#231#227'o de Pagamento *'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -360,28 +362,28 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
       end
       inherited edt_cod_usuario: PriTEdit
         Top = 665
-        TabOrder = 5
+        TabOrder = 4
         ExplicitTop = 665
       end
       inherited edt_codigo: PriTEdit
         Top = -305
-        TabOrder = 22
+        TabOrder = 21
         ExplicitTop = -305
       end
       inherited edt_data_cadastro: PriTEdit
         Top = 665
-        TabOrder = 23
+        TabOrder = 22
         ExplicitTop = 665
       end
       inherited edt_data_ult_alt: PriTEdit
         Top = 665
-        TabOrder = 24
+        TabOrder = 23
         ExplicitTop = 665
       end
       inherited pnl_bottom: TPanel
         Top = 689
         Width = 907
-        TabOrder = 25
+        TabOrder = 24
         ExplicitTop = 689
         ExplicitWidth = 907
         inherited pnl_botao_salvar: TPanel
@@ -407,7 +409,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ItemIndex = 0
         ParentFont = False
-        TabOrder = 6
+        TabOrder = 5
         Text = 'PESSOA F'#205'SICA'
         TextHint = 'Selecione o tipo'
         OnChange = ComboBox_tipo_fornecedorChange
@@ -429,7 +431,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 80
         ParentFont = False
-        TabOrder = 7
+        TabOrder = 6
         MudarCor = clCream
       end
       object edt_apelido_nome_fantasia: PriTEdit
@@ -445,7 +447,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 80
         ParentFont = False
-        TabOrder = 8
+        TabOrder = 7
         MudarCor = clCream
       end
       object edt_endereco: PriTEdit
@@ -461,7 +463,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 60
         ParentFont = False
-        TabOrder = 9
+        TabOrder = 8
         MudarCor = clCream
       end
       object edt_numero: PriTEdit
@@ -477,7 +479,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 8
         ParentFont = False
-        TabOrder = 10
+        TabOrder = 9
         MudarCor = clCream
       end
       object edt_complemento: PriTEdit
@@ -493,7 +495,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 60
         ParentFont = False
-        TabOrder = 11
+        TabOrder = 10
         MudarCor = clCream
       end
       object edt_bairro: PriTEdit
@@ -509,7 +511,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 60
         ParentFont = False
-        TabOrder = 12
+        TabOrder = 11
         MudarCor = clCream
       end
       object edt_cep: PriTMaskEdit
@@ -525,7 +527,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 10
         ParentFont = False
-        TabOrder = 13
+        TabOrder = 12
         Text = '  .   -   '
         MudarCor = clCream
         TipoMascara = tmCEP
@@ -542,7 +544,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         NumbersOnly = True
         ParentFont = False
-        TabOrder = 14
+        TabOrder = 13
         MudarCor = clCream
       end
       object edt_uf: PriTEdit
@@ -559,7 +561,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ParentFont = False
         ReadOnly = True
-        TabOrder = 4
+        TabOrder = 3
         MudarCor = clCream
       end
       object edt_pesquisar_cidade: PriTEdit
@@ -584,7 +586,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Width = 35
         Height = 22
         BevelOuter = bvNone
-        TabOrder = 26
+        TabOrder = 25
         object btn_pesquisa: TSpeedButton
           Left = 0
           Top = 0
@@ -644,7 +646,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 50
         ParentFont = False
-        TabOrder = 21
+        TabOrder = 20
         MudarCor = clCream
       end
       object edt_nome_tipo_selecionado: PriTEdit
@@ -660,7 +662,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 50
         ParentFont = False
-        TabOrder = 19
+        TabOrder = 18
         MudarCor = clCream
       end
       object edt_tipo_contato: PriTEdit
@@ -677,7 +679,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ParentFont = False
         ReadOnly = True
-        TabOrder = 2
+        TabOrder = 1
         MudarCor = clCream
       end
       object pnl_pesquisa_tipo_contato: TPanel
@@ -692,7 +694,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 27
+        TabOrder = 26
         object btn_pesquisa_tipo_contato: TSpeedButton
           Left = 0
           Top = 0
@@ -746,7 +748,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 28
+        TabOrder = 27
         object btn_adicionar_contato: TSpeedButton
           Left = 0
           Top = 0
@@ -776,7 +778,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 18
         ParentFont = False
-        TabOrder = 15
+        TabOrder = 14
         Text = '  .   .   /    -  '
         MudarCor = clCream
         TipoMascara = tmCNPJ
@@ -793,7 +795,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         MaxLength = 14
         ParentFont = False
-        TabOrder = 16
+        TabOrder = 15
         MudarCor = clCream
       end
       object pnl_pesquisa_condicao_pagamento: TPanel
@@ -802,7 +804,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Width = 35
         Height = 22
         BevelOuter = bvNone
-        TabOrder = 29
+        TabOrder = 28
         object btn_pesquisa_condicao_pagamento: TSpeedButton
           Left = 0
           Top = 0
@@ -861,7 +863,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ParentFont = False
         ReadOnly = True
-        TabOrder = 3
+        TabOrder = 2
         MudarCor = clCream
       end
       object edt_cod_condicao_pagamento: PriTEdit
@@ -876,7 +878,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         NumbersOnly = True
         ParentFont = False
-        TabOrder = 17
+        TabOrder = 16
         MudarCor = clCream
       end
       object edt_cod_contato: PriTEdit
@@ -891,31 +893,8 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         NumbersOnly = True
         ParentFont = False
-        TabOrder = 18
+        TabOrder = 17
         MudarCor = clCream
-      end
-      object ListView_contatos: TListView
-        Left = 8
-        Top = 259
-        Width = 777
-        Height = 171
-        Columns = <
-          item
-            Caption = 'Tipo de Contato'
-            Width = 150
-          end
-          item
-            Width = 200
-          end
-          item
-            Caption = 'Observa'#231#227'o'
-            Width = 200
-          end>
-        RowSelect = True
-        TabOrder = 1
-        TabStop = False
-        ViewStyle = vsReport
-        OnSelectItem = ListView_contatosSelectItem
       end
       object pnl_botao_alterar: TPanel
         Left = 576
@@ -931,7 +910,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 30
+        TabOrder = 29
         object btn_botao_alterar_item: TSpeedButton
           Left = 0
           Top = 0
@@ -961,7 +940,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         BevelOuter = bvNone
         Color = clRed
         ParentBackground = False
-        TabOrder = 31
+        TabOrder = 30
         object btn_botao_excluir_item: TSpeedButton
           Left = 0
           Top = 0
@@ -999,7 +978,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 32
+        TabOrder = 31
         Visible = False
         object btn_limpar_grid: TSpeedButton
           Left = 0
@@ -1029,7 +1008,7 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Height = 156
         MaxLength = 250
         ScrollBars = ssVertical
-        TabOrder = 20
+        TabOrder = 19
       end
       object edt_data_nasc: TDateTimePicker
         Left = 329
@@ -1044,8 +1023,77 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 33
+        TabOrder = 32
       end
+      object GridContatos: TDBGrid
+        Left = 16
+        Top = 259
+        Width = 771
+        Height = 171
+        DataSource = dsContatos
+        TabOrder = 33
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'TipoContato'
+            Title.Caption = 'Tipo Contato'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'descricao'
+            Title.Caption = 'Descri'#231#227'o'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'observacao'
+            Title.Caption = 'Observa'#231#227'o'
+            Visible = True
+          end>
+      end
+    end
+  end
+  object dsContatos: TDataSource
+    DataSet = cdsContatos
+    Left = 336
+    Top = 368
+  end
+  object cdsContatos: TClientDataSet
+    PersistDataPacket.Data = {
+      A30000009619E0BD010000001800000005000000000003000000A30010636F64
+      5F7469706F5F636F6E7461746F04000100000000000A6F62736572766163616F
+      01004900000001000557494454480200020032000964657363726963616F0100
+      4900000001000557494454480200020032000B5469706F436F6E7461746F0100
+      4900000001000557494454480200020032000A6E756D436F6E7461746F040001
+      00000000000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 400
+    Top = 360
+    object cdsContatoscod_tipo_contato: TIntegerField
+      FieldName = 'cod_tipo_contato'
+    end
+    object cdsContatosobservacao: TStringField
+      FieldName = 'observacao'
+      Size = 50
+    end
+    object cdsContatosdescricao: TStringField
+      FieldName = 'descricao'
+      Size = 50
+    end
+    object cdsContatosTipoContato: TStringField
+      FieldName = 'TipoContato'
+      Size = 50
+    end
+    object cdsContatosnumContato: TIntegerField
+      FieldName = 'numContato'
     end
   end
 end

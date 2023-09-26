@@ -2,7 +2,8 @@ unit uRoupas;
 
 interface
 
-uses uPai, uGruposRoupas, uMarcas, uTamanhos, uFornecedores, uColecoes, uCores;
+uses uPai, uGruposRoupas, uMarcas, uTamanhos, uFornecedores, uColecoes, uCores,
+uVariacoesRoupas, System.Generics.Collections;
 
 type Roupas = class( Pai )
   private
@@ -23,6 +24,7 @@ type Roupas = class( Pai )
     qtdTotalRoupa : integer;
     umaColecao   : Colecoes;
     obs          : string[250];
+    ListaVariacoes: TObjectList<VariacaoRoupa>;
   public
     constructor crieObj;
     destructor destrua_se;
@@ -43,6 +45,7 @@ type Roupas = class( Pai )
     procedure setoFornecedor ( poFornecedor : Fornecedores );
     procedure setaColecao ( paColecao : Colecoes );
     procedure setObs ( pObs : string );
+    procedure setListaVariacao ( pListaVariacao: TObjectList<VariacaoRoupa>);
 
     function getDescricao : string;
     function getUnidadeMedida : string;
@@ -60,7 +63,9 @@ type Roupas = class( Pai )
     function getoFornecedor : Fornecedores;
     function getaColecao : Colecoes;
     function getObs : string;
+    function getListaVariacao: TObjectList<VariacaoRoupa>;
 
+    procedure setCodigoListaVariacoes;
     function clone : Roupas;
     procedure limparDados;
 end;
@@ -80,6 +85,7 @@ begin
   umTamanho     := Tamanhos.crieObj;
   umFornecedor  := Fornecedores.crieObj;
   umaColecao    := Colecoes.crieObj;
+  ListaVariacoes := TObjectList<VariacaoRoupa>.create;
   self.limparDados;
 
 end;
@@ -92,6 +98,7 @@ begin
   umTamanho.destrua_se;
   umFornecedor.destrua_se;
   umaColecao.destrua_se;
+  ListaVariacoes.Destroy;
 end;
 
 function Roupas.getaColecao: Colecoes;
@@ -122,6 +129,11 @@ end;
 function Roupas.getDescricao: string;
 begin
   Result:= descricao;
+end;
+
+function Roupas.getListaVariacao: TObjectList<VariacaoRoupa>;
+begin
+  result := ListaVariacoes;
 end;
 
 function Roupas.getLucro: currency;
@@ -190,6 +202,7 @@ begin
  umTamanho.limparDados;
  umFornecedor.limparDados;
  umaColecao.limparDados;
+ ListaVariacoes.clear;
 end;
 
 procedure Roupas.setaColecao(paColecao: Colecoes);
@@ -212,6 +225,15 @@ begin
   cod_barra:= pCodBarra;
 end;
 
+procedure Roupas.setCodigoListaVariacoes;
+var i: integer;
+begin
+   for i := 0 to Self.listaVariacoes.Count - 1 do
+   begin
+       Self.listaVariacoes[i].setCodRoupa(Self.GetCodigo);
+   end;
+end;
+
 procedure Roupas.setCodigoRoupa(pCodigoRoupa: string);
 begin
   codigoRoupa:= pCodigoRoupa;
@@ -220,6 +242,11 @@ end;
 procedure Roupas.setDescricao(pDescricao: string);
 begin
   descricao:= pDescricao;
+end;
+
+procedure Roupas.setListaVariacao(pListaVariacao: TObjectList<VariacaoRoupa>);
+begin
+  ListaVariacoes := pListaVariacao;
 end;
 
 procedure Roupas.setLucro(pLucro: currency);
@@ -273,6 +300,7 @@ begin
 end;
 
 function Roupas.clone: Roupas;
+var variacao: variacaoroupa;
 begin
   Result:= Roupas.crieObj;
   Result.setCodigo( codigo );
@@ -295,6 +323,12 @@ begin
   Result.setoFornecedor( umFornecedor.clone );
   Result.setaColecao( umaColecao.clone );
   Result.setObs( obs );
+  if Assigned(ListaVariacoes) then
+    if ListaVariacoes.Count > 0 then
+      begin
+        for variacao in ListaVariacoes do
+          Result.getListaVariacao.Add(variacao.clone);
+      end;
 end;
 
 

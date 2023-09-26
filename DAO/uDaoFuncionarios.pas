@@ -1,8 +1,11 @@
 unit uDaoFuncionarios;
 interface
-uses uDAO, uFilterSearch, uCidades, uTiposContatos, uCargos, uFuncionarios;
+uses
+  uDAO, uFilterSearch, uCidades, uTiposContatos, uCargos, uFuncionarios,
+  Data.DB, FireDAC.Comp.Client;
 type daoFuncionarios = class( DAO )
   private
+    function RetornaCodInserido:Integer;
   protected
   public
     constructor crieObj;                              override;
@@ -26,7 +29,7 @@ var mFuncionario : Funcionarios; mCidade : Cidades; mContato : TiposContatos;
 begin
   mFuncionario:= Funcionarios( pObj );
   mCidade:= mFuncionario.getaCidade;
-  mContato:= mFuncionario.getoContato;
+  //mContato:= mFuncionario.getoContato;
   mCargo:= mFuncionario.getoCargo;
   mFuncionario.setCodigo( aDM.QFuncionarios.FieldByName('CODFUNC').Value );
   mFuncionario.setDataCad( aDM.QFuncionarios.FieldByName('DATACAD').AsDateTime );
@@ -38,8 +41,8 @@ begin
   mFuncionario.setComplemento( aDM.QFuncionarios.FieldByName('COMPLEMENTO').AsString );
   mFuncionario.setBairro( aDM.QFuncionarios.FieldByName('BAIRRO').AsString );
   mFuncionario.setCep( aDM.QFuncionarios.FieldByName('CEP').AsString );
-  mFuncionario.setContatoAux1( aDM.QFuncionarios.FieldByName('CONTATO_AUX1').AsString );
-  mFuncionario.setContatoAux2( aDM.QFuncionarios.FieldByName('CONTATO_AUX2').AsString );
+  //mFuncionario.setContatoAux1( aDM.QFuncionarios.FieldByName('CONTATO_AUX1').AsString );
+  //mFuncionario.setContatoAux2( aDM.QFuncionarios.FieldByName('CONTATO_AUX2').AsString );
   mFuncionario.setCnpjCpf( aDM.QFuncionarios.FieldByName('CPF').AsString );
   mFuncionario.setIeRg( aDM.QFuncionarios.FieldByName('RG').AsString );
   mFuncionario.setDataNasc( aDM.QFuncionarios.FieldByName('DATA_NASC').AsDateTime );
@@ -51,7 +54,7 @@ begin
   mFuncionario.getaCidade.setCodigo(aDM.QFuncionarios.FieldByName('CODCIDADE').Value );
   mFuncionario.getaCidade.setCidade(aDM.QFuncionarios.FieldByName('CIDADE_NOME').AsString );
  // mFuncionario.getaCidade.getoEstado.setUF(aDM.QFuncionarios.FieldByName('UF').AsString );
-  mFuncionario.getoContato.setCodigo(aDM.QFuncionarios.FieldByName('CODCONTATO').Value );
+ // mFuncionario.getoContato.setCodigo(aDM.QFuncionarios.FieldByName('CODCONTATO').Value );
   //mFuncionario.getoContato.setTipoContato(aDM.QFuncionarios.FieldByName('CONTATO').AsString );
   mFuncionario.getoCargo.setCodigo(aDM.QFuncionarios.FieldByName('CODCARGO').Value );
   mFuncionario.getoCargo.setCargo(aDM.QFuncionarios.FieldByName('CARGO').AsString );
@@ -104,13 +107,38 @@ begin
     aDM.QFuncionarios.Open;
     result:= '';
 end;
+function daoFuncionarios.RetornaCodInserido: Integer;
+const
+  SQL =//consulta que retorna qual a posição atual do generator da tabela
+    'select gen_id(gen_Funcionarios, 0) as new_id from rdb$database';
+var
+  aQuery : TFDQuery;
+begin
+  aQuery := TFDQuery.Create(nil);
+  try
+    aQuery.Connection  := aDM.Conexao;
+    aQuery.Transaction := aDM.Transacao;
+    if aQuery.Active then
+      aQuery.Close;
+    aQuery.SQL.Clear;
+    aQuery.SQL.Add(SQL);
+    aQuery.Open;
+    if not(aQuery.IsEmpty) then
+      Result := aQuery.FieldByName('NEW_ID').AsInteger
+    else
+      Result := 0;
+  finally
+    FreeAndNil(aQuery);
+  end;
+end;
+
 function daoFuncionarios.salvar(pObj: TObject): string;
 var mFuncionario : Funcionarios; mCidade : Cidades; mContato : TiposContatos;
     mCargo : Cargos;
 begin
   mFuncionario:= Funcionarios( pObj );
   mCidade:= mFuncionario.getaCidade;
-  mContato:= mFuncionario.getoContato;
+  //mContato:= mFuncionario.getoContato;
   mCargo:= mFuncionario.getoCargo;
   aDM.Transacao.StartTransaction;
   try
@@ -131,8 +159,8 @@ begin
   aDM.QFuncionarios.FieldByName('COMPLEMENTO').AsString:= mFuncionario.getComplemento;
   aDM.QFuncionarios.FieldByName('BAIRRO').AsString:= mFuncionario.getBairro;
   aDM.QFuncionarios.FieldByName('CEP').AsString:= mFuncionario.getCep;
-  aDM.QFuncionarios.FieldByName('CONTATO_AUX1').AsString:= mFuncionario.getContatoAux1;
-  aDM.QFuncionarios.FieldByName('CONTATO_AUX2').AsString:= mFuncionario.getContatoAux2;
+  //aDM.QFuncionarios.FieldByName('CONTATO_AUX1').AsString:= mFuncionario.getContatoAux1;
+  //aDM.QFuncionarios.FieldByName('CONTATO_AUX2').AsString:= mFuncionario.getContatoAux2;
   aDM.QFuncionarios.FieldByName('CPF').AsString:= mFuncionario.getCnpjCpf;
   aDM.QFuncionarios.FieldByName('RG').AsString:= mFuncionario.getIeRg;
   aDM.QFuncionarios.FieldByName('DATA_NASC').AsDateTime:= mFuncionario.getDataNasc;
@@ -144,12 +172,15 @@ begin
   aDM.QFuncionarios.FieldByName('CODCIDADE').AsInteger:= mCidade.getCodigo;
   aDM.QFuncionarios.FieldByName('CIDADE_NOME').AsString:= mCidade.getCidade;
  // aDM.QFuncionarios.FieldByName('UF').AsString:= mCidade.getoEstado.getUF;
-  aDM.QFuncionarios.FieldByName('CODCONTATO').AsInteger:= mContato.getCodigo;
+  //aDM.QFuncionarios.FieldByName('CODCONTATO').AsInteger:= mContato.getCodigo;
  // aDM.QFuncionarios.FieldByName('CONTATO').AsString:= mContato.getTipoContato;
   aDM.QFuncionarios.FieldByName('CODCARGO').AsInteger:= mCargo.getCodigo;
   aDM.QFuncionarios.FieldByName('CARGO').AsString:= mCargo.getCargo;
   aDM.QFuncionarios.Post;
   aDM.Transacao.Commit;
+  result := 'SUCESSO';
+  if  mFuncionario.getCodigo = 0 then
+      mFuncionario.setCodigo( Self.RetornaCodInserido);
   except
     aDM.Transacao.Rollback;
   end;

@@ -720,6 +720,7 @@ object DM: TDM
     Top = 256
   end
   object QFornecedores: TFDQuery
+    Active = True
     Connection = Conexao
     SQL.Strings = (
       'select * from fornecedores')
@@ -1210,6 +1211,7 @@ object DM: TDM
     Top = 256
   end
   object QRoupas: TFDQuery
+    Active = True
     Connection = Conexao
     SQL.Strings = (
       'select * from Roupas')
@@ -1351,6 +1353,12 @@ object DM: TDM
       KeyFields = 'CODCOLECAO'
       Lookup = True
     end
+    object QRoupasUNIDADE_MEDIDA: TStringField
+      FieldName = 'UNIDADE_MEDIDA'
+      Origin = 'UNIDADE_MEDIDA'
+      Visible = False
+      Size = 80
+    end
   end
   object DSRoupas: TDataSource
     DataSet = QRoupas
@@ -1358,16 +1366,125 @@ object DM: TDM
     Top = 328
   end
   object QParcelas: TFDQuery
+    Active = True
     Connection = Conexao
     Transaction = Transacao
     SQL.Strings = (
       'select * from Parcelas')
     Left = 168
     Top = 328
+    object QParcelasCOD_COND_PGTO: TIntegerField
+      FieldName = 'COD_COND_PGTO'
+      Origin = 'COD_COND_PGTO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QParcelasNUMERO_PARCELA: TIntegerField
+      FieldName = 'NUMERO_PARCELA'
+      Origin = 'NUMERO_PARCELA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QParcelasDIAS: TIntegerField
+      FieldName = 'DIAS'
+      Origin = 'DIAS'
+    end
+    object QParcelasPERCENTUAL: TSingleField
+      FieldName = 'PERCENTUAL'
+      Origin = 'PERCENTUAL'
+    end
+    object QParcelasCOD_FORMA_PGTO: TIntegerField
+      FieldName = 'COD_FORMA_PGTO'
+      Origin = 'COD_FORMA_PGTO'
+    end
   end
   object DSParcelas: TDataSource
     DataSet = QParcelas
     Left = 232
+    Top = 328
+  end
+  object QVariacoesRoupas: TFDQuery
+    Active = True
+    Connection = Conexao
+    Transaction = Transacao
+    SQL.Strings = (
+      'select * from variacoes_roupas')
+    Left = 304
+    Top = 328
+    object QVariacoesRoupasCOD_ROUPA: TIntegerField
+      FieldName = 'COD_ROUPA'
+      Origin = 'COD_ROUPA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QVariacoesRoupasNUMERO_VARIACAO: TIntegerField
+      FieldName = 'NUMERO_VARIACAO'
+      Origin = 'NUMERO_VARIACAO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QVariacoesRoupasCOD_COR: TIntegerField
+      FieldName = 'COD_COR'
+      Origin = 'COD_COR'
+    end
+    object QVariacoesRoupasCOD_TAMANHO: TIntegerField
+      FieldName = 'COD_TAMANHO'
+      Origin = 'COD_TAMANHO'
+    end
+    object QVariacoesRoupasCODIGO: TStringField
+      FieldName = 'CODIGO'
+      Origin = 'CODIGO'
+      Size = 10
+    end
+  end
+  object DSVariacoesRoupas: TDataSource
+    DataSet = QVariacoesRoupas
+    Left = 360
+    Top = 328
+  end
+  object QContatos: TFDQuery
+    Connection = Conexao
+    SQL.Strings = (
+      'select * from contatos')
+    Left = 432
+    Top = 328
+    object QContatosCOD_PORTADOR: TIntegerField
+      FieldName = 'COD_PORTADOR'
+      Origin = 'COD_PORTADOR'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QContatosCOD_TIPO_PORTADOR: TIntegerField
+      FieldName = 'COD_TIPO_PORTADOR'
+      Origin = 'COD_TIPO_PORTADOR'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QContatosCOD_TIPO_CONTATO: TIntegerField
+      FieldName = 'COD_TIPO_CONTATO'
+      Origin = 'COD_TIPO_CONTATO'
+      Required = True
+    end
+    object QContatosDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Origin = 'DESCRICAO'
+      Size = 30
+    end
+    object QContatosNUM_CONTATO: TIntegerField
+      FieldName = 'NUM_CONTATO'
+      Origin = 'NUM_CONTATO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QContatosOBSERVACAO: TStringField
+      FieldName = 'OBSERVACAO'
+      Origin = 'OBSERVACAO'
+      Size = 80
+    end
+  end
+  object DSContatos: TDataSource
+    DataSet = QContatos
+    Left = 488
     Top = 328
   end
 end

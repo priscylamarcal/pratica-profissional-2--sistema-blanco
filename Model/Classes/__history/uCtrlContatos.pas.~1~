@@ -1,0 +1,39 @@
+unit uCtrlContatos;
+
+interface
+
+uses uController, uFilterSearch, uContatos,
+    system.Generics.Collections, uTiposContatos, uDaoContatos;
+
+type ctrlContatos = class (Ctrl)
+  private
+
+  protected
+    aDaoContatos : daoContato;
+    aCtrlTiposContatos : CtrlTiposContatos;
+  public
+    constructor crieObj;                              override;
+    destructor destrua_se;                            override;
+    procedure setDM ( pDM : TObject );                override;
+    function getDS : TObject;                         override;
+    function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
+    function salvar ( pObj : TObject ) : string;      override;
+    function excluir ( pObj : TObject ) : string;     override;
+    function carregar ( pObj : TObject ) : string;    override;
+    function salvarContato ( lista: TObjectList<Contato> ) : string;
+
+    procedure setCtrlTiposContatos ( pCtrl : ctrlTiposContatos );
+    function getCtrlTiposContatos : ctrlTiposContatos;
+
+
+    function RetornaListaContatos(const ACodPortador, aTipoPortador: Integer): TObjectList<Contato>;
+    function DeleteListaContatos(const ACodPortador, aTipoPortador: Integer): Boolean;
+end;
+
+implementation
+
+{ ctrlContatos }
+
+
+
+end.

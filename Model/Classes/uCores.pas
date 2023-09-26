@@ -1,9 +1,6 @@
 unit uCores;
-
 interface
-
 uses uPai;
-
 type Cores = class(Pai)
   private
   protected
@@ -16,27 +13,20 @@ type Cores = class(Pai)
     function clone : Cores;
     procedure limparDados;
 end;
-
 implementation
-
 { Cores }
-
 constructor Cores.crieObj;
 begin
   inherited;
   self.limparDados;
 end;
-
 destructor Cores.destrua_se;
 begin
-
 end;
-
 function Cores.getCor: string;
 begin
   Result:= cor;
 end;
-
 procedure Cores.limparDados;
 begin
   inherited;
@@ -47,7 +37,6 @@ procedure Cores.setCor(pCor: string);
 begin
   cor:= pCor;
 end;
-
 function Cores.clone: Cores;
 begin
   Result:= Cores.crieObj;
@@ -57,5 +46,4 @@ begin
   Result.setUltAlt( ultAlt );
   Result.setCodUsu( codUsu );
 end;
-
 end.

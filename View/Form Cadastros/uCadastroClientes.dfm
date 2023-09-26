@@ -3,6 +3,9 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
   ClientHeight = 739
   ClientWidth = 932
   OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  ExplicitTop = -376
   ExplicitWidth = 948
   ExplicitHeight = 778
   PixelsPerInch = 96
@@ -15,27 +18,28 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
     inherited ScrollBox1: TScrollBox
       Width = 932
       Height = 739
+      VertScrollBar.Position = 432
       ExplicitWidth = 932
       ExplicitHeight = 739
       inherited lbl_cod_usuario: TLabel
-        Top = 1077
+        Top = 645
         ExplicitTop = 967
       end
       inherited lbl_codigo: TLabel
-        Top = 40
+        Top = -392
         ExplicitTop = 40
       end
       inherited lbl_data_cadastro: TLabel
-        Top = 1077
+        Top = 645
         ExplicitTop = 959
       end
       inherited lbl_data_ult_alt: TLabel
-        Top = 1077
+        Top = 645
         ExplicitTop = 959
       end
       object lbl_titulo_dados_gerais: TLabel [4]
         Left = 16
-        Top = 16
+        Top = -416
         Width = 116
         Height = 18
         Caption = 'DADOS GERAIS'
@@ -48,7 +52,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_tipo_cliente: TLabel [5]
         Left = 112
-        Top = 40
+        Top = -392
         Width = 86
         Height = 16
         Caption = 'Tipo de Cliente'
@@ -61,7 +65,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_razao_social: TLabel [6]
         Left = 8
-        Top = 94
+        Top = -338
         Width = 85
         Height = 16
         Caption = 'Raz'#227'o Social *'
@@ -74,7 +78,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_nome_fantasia: TLabel [7]
         Left = 500
-        Top = 94
+        Top = -338
         Width = 97
         Height = 16
         Caption = 'Nome Fantasia *'
@@ -87,7 +91,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_titulo_endereco: TLabel [8]
         Left = 16
-        Top = 152
+        Top = -280
         Width = 83
         Height = 18
         Caption = 'ENDERE'#199'O'
@@ -100,7 +104,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_endereco: TLabel [9]
         Left = 8
-        Top = 180
+        Top = -252
         Width = 65
         Height = 16
         Caption = 'Endere'#231'o *'
@@ -113,7 +117,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_numero: TLabel [10]
         Left = 432
-        Top = 180
+        Top = -252
         Width = 57
         Height = 16
         Caption = 'N'#250'mero *'
@@ -126,7 +130,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_complemento: TLabel [11]
         Left = 579
-        Top = 180
+        Top = -252
         Width = 79
         Height = 16
         Caption = 'Complemento'
@@ -139,14 +143,14 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_bairro: TLabel [12]
         Left = 8
-        Top = 242
+        Top = -190
         Width = 37
         Height = 13
         Caption = 'Bairro *'
       end
       object lbl_cep: TLabel [13]
         Left = 432
-        Top = 242
+        Top = -190
         Width = 22
         Height = 16
         Caption = 'CEP'
@@ -159,7 +163,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_codigo_cidade: TLabel [14]
         Left = 8
-        Top = 309
+        Top = -123
         Width = 39
         Height = 16
         Caption = 'C'#243'digo'
@@ -172,7 +176,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_cidade: TLabel [15]
         Left = 96
-        Top = 309
+        Top = -123
         Width = 51
         Height = 16
         Caption = 'Cidade *'
@@ -185,7 +189,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_uf: TLabel [16]
         Left = 539
-        Top = 309
+        Top = -123
         Width = 15
         Height = 16
         Caption = 'UF'
@@ -198,7 +202,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_algo_contato: TLabel [17]
         Left = 539
-        Top = 611
+        Top = 179
         Width = 67
         Height = 16
         Caption = 'Observa'#231#227'o'
@@ -211,7 +215,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_contatos: TLabel [18]
         Left = 16
-        Top = 586
+        Top = 154
         Width = 84
         Height = 18
         Caption = 'CONTATOS'
@@ -224,7 +228,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_nome_tipo: TLabel [19]
         Left = 308
-        Top = 611
+        Top = 179
         Width = 4
         Height = 16
         Font.Charset = DEFAULT_CHARSET
@@ -236,7 +240,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_tipo_contato: TLabel [20]
         Left = 96
-        Top = 611
+        Top = 179
         Width = 103
         Height = 16
         Caption = 'Tipo de Contato *'
@@ -249,7 +253,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_vendedor_responsavel: TLabel [21]
         Left = 96
-        Top = 435
+        Top = 3
         Width = 143
         Height = 16
         Caption = 'Vendedor/Respons'#225'vel *'
@@ -262,7 +266,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_cnpj: TLabel [22]
         Left = 8
-        Top = 372
+        Top = -60
         Width = 40
         Height = 16
         Caption = 'CNPJ *'
@@ -275,7 +279,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_ie: TLabel [23]
         Left = 184
-        Top = 372
+        Top = -60
         Width = 23
         Height = 16
         Caption = 'IE *'
@@ -288,7 +292,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_titulo_financeiro: TLabel [24]
         Left = 16
-        Top = 493
+        Top = 61
         Width = 99
         Height = 18
         Caption = 'FINANCEIRO'
@@ -301,7 +305,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_limite_credito: TLabel [25]
         Left = 6
-        Top = 524
+        Top = 92
         Width = 109
         Height = 16
         Caption = 'Limite de Cr'#233'dito *'
@@ -314,7 +318,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_cod_condicao_pagamento: TLabel [26]
         Left = 134
-        Top = 524
+        Top = 92
         Width = 39
         Height = 16
         Caption = 'C'#243'digo'
@@ -327,7 +331,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_condicao_pagamento: TLabel [27]
         Left = 224
-        Top = 524
+        Top = 92
         Width = 150
         Height = 16
         Caption = 'Condi'#231#227'o de Pagamento *'
@@ -340,7 +344,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_obs: TLabel [28]
         Left = 16
-        Top = 901
+        Top = 469
         Width = 113
         Height = 18
         Caption = 'OBSERVA'#199#213'ES'
@@ -353,7 +357,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_cod_contato: TLabel [29]
         Left = 8
-        Top = 611
+        Top = 179
         Width = 39
         Height = 16
         Caption = 'C'#243'digo'
@@ -366,7 +370,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object lbl_cod_vendedor_responsavel: TLabel [30]
         Left = 8
-        Top = 435
+        Top = 3
         Width = 39
         Height = 16
         Caption = 'C'#243'digo'
@@ -378,30 +382,30 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
         ParentFont = False
       end
       inherited edt_cod_usuario: PriTEdit
-        Top = 1092
+        Top = 660
         TabOrder = 22
-        ExplicitTop = 1092
+        ExplicitTop = 660
       end
       inherited edt_codigo: PriTEdit
-        Top = 59
+        Top = -373
         TabOrder = 23
-        ExplicitTop = 59
+        ExplicitTop = -373
       end
       inherited edt_data_cadastro: PriTEdit
-        Top = 1092
+        Top = 660
         TabOrder = 24
-        ExplicitTop = 1092
+        ExplicitTop = 660
       end
       inherited edt_data_ult_alt: PriTEdit
-        Top = 1092
+        Top = 660
         TabOrder = 25
-        ExplicitTop = 1092
+        ExplicitTop = 660
       end
       inherited pnl_bottom: TPanel
-        Top = 1116
+        Top = 684
         Width = 915
         TabOrder = 26
-        ExplicitTop = 1116
+        ExplicitTop = 684
         ExplicitWidth = 915
         inherited pnl_botao_salvar: TPanel
           Left = 584
@@ -414,7 +418,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object ComboBox_tipo_cliente: TComboBox1
         Left = 112
-        Top = 59
+        Top = -373
         Width = 145
         Height = 22
         Style = csOwnerDrawFixed
@@ -434,7 +438,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_razao_social: PriTEdit
         Left = 8
-        Top = 112
+        Top = -320
         Width = 465
         Height = 24
         CharCase = ecUpperCase
@@ -450,7 +454,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_nome_fantasia: PriTEdit
         Left = 500
-        Top = 112
+        Top = -320
         Width = 346
         Height = 24
         CharCase = ecUpperCase
@@ -466,7 +470,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_bairro: PriTEdit
         Left = 8
-        Top = 264
+        Top = -168
         Width = 392
         Height = 24
         CharCase = ecUpperCase
@@ -482,7 +486,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cep: PriTMaskEdit
         Left = 432
-        Top = 264
+        Top = -168
         Width = 80
         Height = 24
         EditMask = '99.999-999;1;_'
@@ -500,7 +504,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cod_cidade: PriTEdit
         Left = 8
-        Top = 328
+        Top = -104
         Width = 80
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -516,7 +520,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cidade: PriTEdit
         Left = 96
-        Top = 328
+        Top = -104
         Width = 389
         Height = 24
         TabStop = False
@@ -533,7 +537,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_uf: PriTEdit
         Left = 539
-        Top = 328
+        Top = -104
         Width = 80
         Height = 24
         TabStop = False
@@ -550,7 +554,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_endereco: PriTEdit
         Left = 8
-        Top = 202
+        Top = -230
         Width = 393
         Height = 24
         CharCase = ecUpperCase
@@ -566,7 +570,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_numero: PriTEdit
         Left = 432
-        Top = 202
+        Top = -230
         Width = 121
         Height = 24
         CharCase = ecUpperCase
@@ -582,7 +586,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_complemento: PriTEdit
         Left = 579
-        Top = 202
+        Top = -230
         Width = 267
         Height = 24
         CharCase = ecUpperCase
@@ -598,7 +602,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_adicionar_cidade: TPanel
         Left = 487
-        Top = 330
+        Top = -102
         Width = 35
         Height = 22
         BevelOuter = bvNone
@@ -651,7 +655,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_algo: PriTEdit
         Left = 539
-        Top = 633
+        Top = 201
         Width = 180
         Height = 24
         CharCase = ecUpperCase
@@ -667,7 +671,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_nome_tipo_selecionado: PriTEdit
         Left = 308
-        Top = 633
+        Top = 201
         Width = 220
         Height = 24
         CharCase = ecUpperCase
@@ -683,7 +687,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_tipo_contato: PriTEdit
         Left = 96
-        Top = 633
+        Top = 201
         Width = 166
         Height = 24
         TabStop = False
@@ -700,7 +704,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_pesquisa_tipo_contato: TPanel
         Left = 263
-        Top = 635
+        Top = 203
         Width = 35
         Height = 22
         BevelOuter = bvNone
@@ -753,7 +757,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_pesquisar_registro: PriTEdit
         Left = 96
-        Top = 454
+        Top = 22
         Width = 280
         Height = 24
         TabStop = False
@@ -769,7 +773,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_btn_pesquisa: TPanel
         Left = 376
-        Top = 456
+        Top = 24
         Width = 35
         Height = 22
         BevelOuter = bvNone
@@ -822,7 +826,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cnpj: PriTMaskEdit
         Left = 8
-        Top = 392
+        Top = -40
         Width = 124
         Height = 24
         EditMask = '99.999.999/9999-99;1;_'
@@ -840,7 +844,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_ie: PriTEdit
         Left = 184
-        Top = 392
+        Top = -40
         Width = 121
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -855,7 +859,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_limite_credito: PriTEdit
         Left = 8
-        Top = 544
+        Top = 112
         Width = 80
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -871,7 +875,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cod_condicao_pagamento: PriTEdit
         Left = 134
-        Top = 544
+        Top = 112
         Width = 80
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -887,7 +891,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_pesquisa_condicao_pagamento: PriTEdit
         Left = 222
-        Top = 544
+        Top = 112
         Width = 280
         Height = 24
         TabStop = False
@@ -903,7 +907,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_pesquisa_condicao_pagamento: TPanel
         Left = 506
-        Top = 545
+        Top = 113
         Width = 35
         Height = 22
         BevelOuter = bvNone
@@ -956,7 +960,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object memo_obs: TMemo
         Left = 8
-        Top = 925
+        Top = 493
         Width = 838
         Height = 130
         MaxLength = 250
@@ -965,7 +969,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cod_contato: PriTEdit
         Left = 8
-        Top = 633
+        Top = 201
         Width = 80
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -981,7 +985,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object edt_cod_vendedor_responsavel: PriTEdit
         Left = 8
-        Top = 454
+        Top = 22
         Width = 80
         Height = 24
         Font.Charset = DEFAULT_CHARSET
@@ -995,32 +999,9 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
         TabOrder = 15
         MudarCor = clCream
       end
-      object ListView1: TListView
-        Left = 8
-        Top = 719
-        Width = 838
-        Height = 172
-        Columns = <
-          item
-            Caption = 'Tipo de Contato'
-            Width = 180
-          end
-          item
-            Width = 180
-          end
-          item
-            Caption = 'Observa'#231#227'o'
-            Width = 180
-          end>
-        RowSelect = True
-        TabOrder = 32
-        TabStop = False
-        ViewStyle = vsReport
-        OnSelectItem = ListView1SelectItem
-      end
       object pbl_limpar_grid: TPanel
         Left = 789
-        Top = 366
+        Top = -66
         Width = 100
         Height = 40
         BevelOuter = bvNone
@@ -1033,7 +1014,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 33
+        TabOrder = 32
         Visible = False
         object btn_limpar_grid: TSpeedButton
           Left = 0
@@ -1058,13 +1039,13 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_botao_excluir_item: TPanel
         Left = 752
-        Top = 670
+        Top = 238
         Width = 94
         Height = 40
         BevelOuter = bvNone
         Color = clRed
         ParentBackground = False
-        TabOrder = 34
+        TabOrder = 33
         object btn_botao_excluir_item: TSpeedButton
           Left = 0
           Top = 0
@@ -1089,7 +1070,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_botao_alterar: TPanel
         Left = 640
-        Top = 670
+        Top = 238
         Width = 94
         Height = 40
         BevelOuter = bvNone
@@ -1101,7 +1082,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 35
+        TabOrder = 34
         object btn_botao_alterar_item: TSpeedButton
           Left = 0
           Top = 0
@@ -1125,7 +1106,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
       end
       object pnl_adicionar_contato: TPanel
         Left = 520
-        Top = 670
+        Top = 238
         Width = 94
         Height = 40
         BevelOuter = bvNone
@@ -1137,7 +1118,7 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
         Font.Style = []
         ParentBackground = False
         ParentFont = False
-        TabOrder = 36
+        TabOrder = 35
         object btn_adicionar_contato: TSpeedButton
           Left = 0
           Top = 0
@@ -1154,6 +1135,76 @@ inherited form_cadastro_clientes: Tform_cadastro_clientes
           ExplicitHeight = 22
         end
       end
+      object GridContatos: TDBGrid
+        Left = 16
+        Top = 291
+        Width = 830
+        Height = 172
+        DataSource = dsContatos
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+        TabOrder = 36
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'TipoContato'
+            Title.Caption = 'Tipo Contato'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'descricao'
+            Title.Caption = 'Descri'#231#227'o'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'observacao'
+            Title.Caption = 'Observa'#231#227'o'
+            Visible = True
+          end>
+      end
     end
+  end
+  object cdsContatos: TClientDataSet
+    PersistDataPacket.Data = {
+      A30000009619E0BD010000001800000005000000000003000000A30010636F64
+      5F7469706F5F636F6E7461746F04000100000000000A6F62736572766163616F
+      01004900000001000557494454480200020032000964657363726963616F0100
+      4900000001000557494454480200020032000B5469706F436F6E7461746F0100
+      4900000001000557494454480200020032000A6E756D436F6E7461746F040001
+      00000000000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 400
+    Top = 360
+    object cdsContatoscod_tipo_contato: TIntegerField
+      FieldName = 'cod_tipo_contato'
+    end
+    object cdsContatosobservacao: TStringField
+      FieldName = 'observacao'
+      Size = 50
+    end
+    object cdsContatosdescricao: TStringField
+      FieldName = 'descricao'
+      Size = 50
+    end
+    object cdsContatosTipoContato: TStringField
+      FieldName = 'TipoContato'
+      Size = 50
+    end
+    object cdsContatosnumContato: TIntegerField
+      FieldName = 'numContato'
+    end
+  end
+  object dsContatos: TDataSource
+    DataSet = cdsContatos
+    Left = 336
+    Top = 368
   end
 end

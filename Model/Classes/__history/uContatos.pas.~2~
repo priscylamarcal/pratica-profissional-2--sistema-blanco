@@ -1,0 +1,113 @@
+unit uContatos;
+
+interface
+
+uses Classes,
+     SysUtils,
+     uTiposContatos;
+
+
+type
+  TipoPortador = (Indefinido= -1, Cliente = 0, Fornecedor = 1, Funcionario = 3);
+
+  Contato = class
+
+  private
+
+
+  protected
+	descricao: string;
+	TipoContato: TiposContatos;
+  codPortador: integer;
+  codTipoPortador: TipoPortador;
+  public
+     constructor crieObj;
+     destructor destrua_se;
+     function getaDescricao: string;
+     function getaTipoContato: TiposContatos;
+     function getaCodPortador: integer;
+     function getacodTipoPortador: TipoPortador;
+
+
+     procedure setDescricao(pDescricao: string);
+     procedure setTipoContato(pTipoContato: TiposContatos);
+     procedure setCodPortador(pCodPortador: integer);
+     procedure setcodTipoPortador(pTipoPortador: TipoPortador);
+
+     function clone : Contato;
+     procedure limparDados;
+end;
+
+implementation
+
+{ Contatos }
+
+
+
+{ Contato }
+
+function Contato.clone: Contato;
+begin
+  Result:= Contato.crieObj;
+  Result.setDescricao(Descricao);
+  result.setTipoContato(TipoContato);
+  result.setCodPortador(CodPortador);
+  result.setcodTipoPortador(codTipoPortador);
+end;
+
+constructor Contato.crieObj;
+begin
+
+end;
+
+destructor Contato.destrua_se;
+begin
+
+end;
+
+function Contato.getaCodPortador: integer;
+begin
+
+end;
+
+function Contato.getacodTipoPortador: TipoPortador;
+begin
+
+end;
+
+function Contato.getaDescricao: string;
+begin
+
+end;
+
+function Contato.getaTipoContato: TiposContatos;
+begin
+
+end;
+
+procedure Contato.limparDados;
+begin
+
+end;
+
+procedure Contato.setCodPortador(pCodPortador: integer);
+begin
+
+end;
+
+procedure Contato.setcodTipoPortador(pTipoPortador: TipoPortador);
+begin
+
+end;
+
+procedure Contato.setDescricao(pDescricao: string);
+begin
+
+end;
+
+procedure Contato.setTipoContato(pTipoContato: TiposContatos);
+begin
+
+end;
+
+end.

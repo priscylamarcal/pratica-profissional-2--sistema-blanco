@@ -1,0 +1,267 @@
+unit uDaoVariacoesRoupas;
+
+interface
+
+uses uDAO,
+  uFilterSearch, uVariacoesRoupas, uCores, uTamanhos,
+
+  System.Generics.Collections, System.SysUtils;
+
+type
+  daoVariacaoRoupa = class(DAO)
+  private
+
+  protected
+  public
+    constructor crieObj; override;
+    function getDS: TObject; override;
+    function pesquisar(AFilter: TFilterSearch; pChave: string): string;
+      override;
+    function salvar(pObj: TObject): string; override;
+    function excluir(pObj: TObject): string; override;
+    function carregar(pObj: TObject): string; override;
+    function salvarLista(lista: TObjectList<VariacaoRoupa>): string;
+    function carregarLista(lista: TObjectList<VariacaoRoupa>): string;
+
+    function RetornaListaVariacoesRoupas(const ACodRoupa: Integer) : TObjectList<VariacaoRoupa>;
+    function DeleteListaVariacoesRoupasCondPgto(const ACodRoupa: Integer): Boolean;
+  end;
+
+implementation
+uses
+  FireDAC.Comp.Client;
+{ daoVariacoesRoupas }
+
+function daoVariacaoRoupa.carregar(pObj: TObject): string;
+var
+  mVariacaoRoupa: VariacaoRoupa;
+  mCor: Cores;
+  mTamanho: Tamanhos;
+begin
+  mVariacaoRoupa := VariacaoRoupa(pObj);
+  mCor := mVariacaoRoupa.getaCor;
+  mTamanho := mVariacaoRoupa.getaTamanho;
+
+  mVariacaoRoupa.setcodigo(aDM.QVariacoesRoupas.FieldByName('CODIGO').AsString);
+  mVariacaoRoupa.setnumeroVariacao(aDM.QVariacoesRoupas.FieldByName('numero_Variacao').AsInteger);
+
+  mVariacaoRoupa.getacor.setCodigo
+    (aDM.QVariacoesRoupas.FieldByName('COD_COR').Value);
+
+  mVariacaoRoupa.getatamanho.setCodigo
+    (aDM.QVariacoesRoupas.FieldByName('COD_TAMANHO').Value);
+end;
+
+function daoVariacaoRoupa.RetornaListaVariacoesRoupas(const ACodRoupa: Integer)
+  : TObjectList<VariacaoRoupa>;
+var
+  AVariacaoRoupa: VariacaoRoupa;
+  AQuery  : TFDQuery;
+begin
+  Result := nil;
+  AQuery := TFDQuery.Create(nil);
+  try
+    AQuery.Connection  := adm.Conexao;
+    AQuery.Transaction := aDM.Transacao;
+
+    if (AQuery.Active) then
+     AQuery.Close;
+    AQuery.SQL.Clear;
+
+    AQuery.SQL.Add('SELECT * FROM VariacoesRoupas');
+    AQuery.SQL.Add('WHERE COD_ROUPA = :COD_ROUPA');
+    AQuery.ParamByName('COD_ROUPA').AsInteger := ACodRoupa;
+    AQuery.Open;
+
+    AQuery.First;
+
+    Result := TObjectList<VariacaoRoupa>.Create;
+    while not(AQuery.Eof) do
+    begin
+      AVariacaoRoupa := VariacaoRoupa.crieObj;
+
+      with AVariacaoRoupa, AQuery do
+      begin
+        setCodigo(FieldByName('CODIGO').AsString);
+        setNumeroVariacao(FieldByName('NUMERO_Variacao').AsInteger);
+        getaCor.setCodigo(FieldByName('cod_cor').AsInteger);
+        getaTamanho.setCodigo(FieldByName('COD_TAMANHO').AsInteger);
+        se
+        getaFormaPgto.setCodigo(FieldByName('COD_FORMA_PGTO').Value);
+        if aDM.QFormasPagamentos.Locate('CODFORMA', getaFormaPgto.getCodigo, []) then
+         getaFormaPgto.setFormaPagamento(aDM.QFormasPagamentos.FieldByName('FORMA').AsString);
+      end;
+
+      Result.Add(AVariacaoRoupa);
+      AQuery.Next;
+    end;
+
+    AQuery.Close;
+  finally
+    FreeAndNil(AQuery);
+  end;
+end;
+
+function daoVariacaoRoupa.carregarLista(lista: TObjectList<VariacaoRoupa>): string;
+begin
+
+end;
+
+constructor daoVariacaoRoupa.crieObj;
+begin
+  inherited;
+end;
+
+function daoVariacaoRoupa.DeleteListaVariacoesRoupasCondPgto(const ACodRoupa: Integer): Boolean;
+begin
+  if (aDM.QVariacoesRoupas.Active) then
+    aDM.QVariacoesRoupas.Close;
+
+  if not aDM.Conexao.InTransaction then
+    aDM.Transacao.StartTransaction;
+  try
+    aDM.QVariacoesRoupas.SQL.Clear;
+    aDM.QVariacoesRoupas.SQL.Add('DELETE FROM VariacoesRoupas WHERE COD_ROUPA = :COD_ROUPA');
+    aDM.QVariacoesRoupas.ParamByName('COD_Roupa').AsInteger := ACodRoupa;
+    aDM.QVariacoesRoupas.ExecSQL;
+
+    Result := (aDM.QVariacoesRoupas.RowsAffected > 0);
+
+    aDM.Transacao.Commit;
+  except
+    on e: Exception do
+    begin
+      raise Exception.Create('Erro:' + e.Message);
+      Result := False;
+      aDM.Transacao.Rollback;
+    end;
+  end;
+end;
+
+function daoVariacaoRoupa.excluir(pObj: TObject): string;
+begin
+  aDM.Conexao.StartTransaction;
+
+  aDM.QVariacoesRoupas.SQL.Clear;
+  aDM.QVariacoesRoupas.SQL.Add
+    ('DELETE FROM VariacoesRoupas WHERE COD_ROUPA = :COD_ROUPA');
+  aDM.QVariacoesRoupas.ParamByName('COD_ROUPA').AsInteger := VariacaoRoupa(pObj)
+    .getaCodRoupa;
+  aDM.QVariacoesRoupas.ExecSQL;
+
+  try
+    aDM.Conexao.Commit;
+    Result := 'SUCESSO';
+  except
+    aDM.Conexao.Rollback;
+    Result := 'ERRO';
+  end;
+end;
+
+function daoVariacaoRoupa.getDS: TObject;
+begin
+  Result := aDM.DSVariacoesRoupas;
+end;
+
+function daoVariacaoRoupa.pesquisar(AFilter: TFilterSearch; pChave: string): string;
+var
+  msql: string;
+begin
+  msql := 'SELECT * FROM VariacoesRoupas';
+
+  case AFilter.TipoConsulta of
+
+//    TpCCodigo:
+//      begin
+//        msql := 'SELECT * FROM VariacoesRoupas WHERE COD =' + IntToStr(AFilter.Codigo);
+//      end;
+
+    // TpCParam:
+    // begin
+    // msql:= ( 'SELECT * FROM VariacoesRoupas WHERE ESTADO LIKE  ' + QuotedStr( '%' + AFilter.Parametro + '%' ) );
+    // end;
+
+    TpCTODOS:
+      begin
+        msql := 'SELECT * FROM VariacoesRoupas ORDER BY VariacoesRoupas';
+      end;
+
+  end;
+
+  aDM.QVariacoesRoupas.Active   := False;
+  aDM.QVariacoesRoupas.SQL.Text := msql;
+  aDM.QVariacoesRoupas.Open;
+  Result := '';
+end;
+
+function daoVariacaoRoupa.salvar(pObj: TObject): string;
+var
+  mVariacaoRoupa: VariacaoRoupa;
+  mCor: Cores;
+  mTamanho: Tamanhos;
+
+begin
+  mVariacaoRoupa := VariacaoRoupa(pObj);
+  mCor := mVariacaoRoupa.getaCor;
+  mTamanho := mVariacaoRoupa.getaTamanho;
+
+  if aDM.QVariacoesRoupas.Active then
+    aDM.QVariacoesRoupas.Close;
+  aDM.QVariacoesRoupas.SQL.Clear;
+
+  if not(aDM.Conexao.InTransaction) then
+    aDM.Transacao.StartTransaction;
+  try
+//    aDM.QVariacoesRoupas.Insert;
+//
+//    aDM.QVariacoesRoupas.FieldByName('DIAS').AsInteger           := mVariacaoRoupa.getDias;
+//    aDM.QVariacoesRoupas.FieldByName('NUMERO_VariacaoRoupa').AsInteger := mVariacaoRoupa.getVariacoesRoupas;
+//    aDM.QVariacoesRoupas.FieldByName('PERCENTUAL').AsFloat       := mVariacaoRoupa.getPorcentagem;
+//    aDM.QVariacoesRoupas.FieldByName('COD_COND_PGTO').AsInteger  := mVariacaoRoupa.getCodCondPgto;
+//    aDM.QVariacoesRoupas.FieldByName('COD_FORMA_PGTO').AsInteger := mFormaPagamento.getCodigo;
+//
+//    aDM.QVariacoesRoupas.Post;
+    aDM.QVariacoesRoupas.SQL.Add('insert into VariacoesRoupas');
+    aDM.QVariacoesRoupas.SQL.Add('(COD_ROUPA, NUMERO_VARIACAO, COD_COR, COD_TAMANHO, CODIGO)');
+    aDM.QVariacoesRoupas.SQL.Add('values');
+    aDM.QVariacoesRoupas.SQL.Add('(:COD_ROUPA, :NUMERO_VARIACAO, :COD_COR, :COD_TAMANHO, :CODIGO)');
+
+    aDM.QVariacoesRoupas.ParamByName('COD_ROUPA').AsInteger       := mVariacaoRoupa.getaCodRoupa;
+    aDM.QVariacoesRoupas.ParamByName('NUMERO_VARIACAO').AsInteger := mVariacaoRoupa.getaNumeroVariacao;
+    adm.QVariacoesRoupas.ParamByName('COD_COR').AsInteger         := mVariacaoRoupa.getaCor.getCodigo;
+    aDM.QVariacoesRoupas.ParamByName('COD_TAMANHO').AsInteger     := mVariacaoRoupa.getaTamanho.getCodigo;
+    aDM.QVariacoesRoupas.ParamByName('codigo').Asstring           := mVariacaoRoupa.getacodigo;
+
+    aDM.QVariacoesRoupas.ExecSQL;
+
+    aDM.Transacao.Commit;
+    Result := 'S';
+  except
+    on e: Exception do
+    begin
+      raise Exception.Create('Erro: ' + e.Message);
+      Result := e.Message;
+      aDM.Transacao.Rollback;
+    end;
+  end;
+end;
+
+function daoVariacaoRoupa.salvarLista(lista: TObjectList<VariacaoRoupa>): string;
+var
+  I: Integer;
+  Obj: TObject;
+  CodRoupa: Integer;
+begin
+  // Result := False;
+  CodRoupa := lista[0].getaCodRoupa;
+
+  for I := 0 to lista.Count - 1 do
+  begin
+    lista[I].setCodRoupa(CodRoupa);
+    Obj := lista[I];
+    Result := Self.salvar(Obj);
+  end;
+end;
+
+end.
+

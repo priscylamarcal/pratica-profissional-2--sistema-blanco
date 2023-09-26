@@ -1,7 +1,6 @@
 ﻿inherited form_cadastro_compras: Tform_cadastro_compras
   Caption = 'Cadastrar Compra'
   ClientHeight = 760
-  ExplicitTop = -5
   ExplicitHeight = 799
   PixelsPerInch = 96
   TextHeight = 13
@@ -736,6 +735,7 @@
         Font.Style = []
         ParentFont = False
         TabOrder = 10
+        OnChange = edt_descontoChange
         MudarCor = clCream
       end
       object edt_valor_total: PriTEdit
@@ -750,6 +750,7 @@
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ReadOnly = True
         TabOrder = 11
         MudarCor = clCream
       end

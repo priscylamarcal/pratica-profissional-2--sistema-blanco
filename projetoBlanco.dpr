@@ -114,7 +114,13 @@ uses
   MaskEdit1 in 'Componentes Delphi\Source\MaskEdit1.pas',
   campoEdit in 'Componentes Delphi\Source\campoEdit.pas',
   ComboBox in 'Componentes Delphi\Source\ComboBox.pas',
-  uCompras in 'Model\Classes\uCompras.pas';
+  uCompras in 'Model\Classes\uCompras.pas',
+  uVariacoesRoupas in 'Model\Classes\uVariacoesRoupas.pas',
+  uCtrlVariacoesRoupas in 'Controller\uCtrlVariacoesRoupas.pas',
+  uDaoVariacoesRoupas in 'DAO\uDaoVariacoesRoupas.pas',
+  uContatos in 'Model\Classes\uContatos.pas',
+  uCtrlContatos in 'Controller\uCtrlContatos.pas',
+  uDaoContatos in 'DAO\uDaoContatos.pas';
 
 {$R *.res}
 begin

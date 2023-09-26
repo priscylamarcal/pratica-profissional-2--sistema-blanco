@@ -9,7 +9,8 @@ uses
   campoEdit, Vcl.ExtCtrls, ComboBox, Vcl.Mask, MaskEdit1, Data.DB, Vcl.Grids,
   Vcl.DBGrids, Vcl.ComCtrls, uFornecedores, uCtrlFornecedores,
   uConsulta_Cidades,
-  uConsulta_TiposContatos, uConsulta_CondicoesPagamentos;
+  uConsulta_TiposContatos, uConsulta_CondicoesPagamentos, uTiposContatos, uContatos,
+  Datasnap.DBClient;
 
 type
   Tform_cadastro_fornecedores = class(Tform_cadastro_pai)
@@ -62,7 +63,6 @@ type
     lbl_condicao_pagamento: TLabel;
     lbl_cod_contato: TLabel;
     edt_cod_contato: PriTEdit;
-    ListView_contatos: TListView;
     pnl_botao_alterar: TPanel;
     btn_botao_alterar_item: TSpeedButton;
     pnl_botao_excluir_item: TPanel;
@@ -74,6 +74,14 @@ type
     lbl_data_fundacao_nascimento: TLabel;
     lbl_nome_tipo: TLabel;
     edt_data_nasc: TDateTimePicker;
+    GridContatos: TDBGrid;
+    dsContatos: TDataSource;
+    cdsContatos: TClientDataSet;
+    cdsContatoscod_tipo_contato: TIntegerField;
+    cdsContatosobservacao: TStringField;
+    cdsContatosdescricao: TStringField;
+    cdsContatosTipoContato: TStringField;
+    cdsContatosnumContato: TIntegerField;
     procedure ComboBox_tipo_fornecedorChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -86,6 +94,8 @@ type
     procedure ListView_contatosSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
     procedure btn_botao_alterar_itemClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     oFornecedor: Fornecedores;
@@ -94,6 +104,9 @@ type
     aConsultaContatos: Tform_consulta_tipos_contatos;
     aConsultacondicao: Tform_consulta_condicoes_pagamentos;
     CpfCnpjFornecedor: string;
+    Alterar: boolean;
+    TipoContato: TiposContatos;
+    //function validaItens: Boolean;
   public
     { Public declarations }
     procedure conhecaObj(pCtrl, pObj: TObject); override;
@@ -110,9 +123,11 @@ type
     procedure setFrmConsultaContatos(pConsulta: TObject);
     procedure setFrmConsultaCondicaoPagamento(pConsulta: TObject);
     procedure tipoFornecedor;
-    procedure adicionarItens;
+    procedure adicionarItens(pEdit: boolean);
     procedure limparItens;
-    function validaItens: Boolean;
+    procedure AlterarItem;
+    procedure ExcluirItem;
+    procedure bloquearItens(pBloq: boolean);
   end;
 
 var
@@ -123,14 +138,78 @@ implementation
 {$R *.dfm}
 
 { Tform_cadastro_fornecedores }
-procedure Tform_cadastro_fornecedores.adicionarItens;
-var
-  Item: TListItem;
+procedure Tform_cadastro_fornecedores.adicionarItens(pEdit: boolean);
+  function validaItens: Boolean;
+  begin
+    result := false;
+
+    if (Self.edt_tipo_contato.Text = '') or (Self.edt_cod_contato.text = '') then
+    begin
+      MessageDlg( 'Selecione o tipo contato!', MtInformation, [ MbOK ], 0 );
+      self.edt_tipo_contato.setFocus;
+      Exit;
+    end;
+
+    if (Self.edt_nome_tipo_selecionado.Text = '') then
+    begin
+      MessageDlg( 'Selecione o tamanho da variação!', MtInformation, [ MbOK ], 0 );
+      self.edt_nome_tipo_selecionado.setFocus;
+      Exit;
+    end;
+
+//    if (Self.edt_algo.Text = '') then
+//    begin
+//      MessageDlg( 'O campo código é obrigatório!', MtInformation, [ MbOK ], 0 );
+//      Self.edt_algo.setFocus;
+//      Exit;
+//    end;
+
+    result := true;
+  end;
 begin
-  Item := ListView_contatos.Items.Add;
-  Item.Caption := edt_tipo_contato.Text;
-  Item.SubItems.Add(edt_nome_tipo_selecionado.Text);
-  Item.SubItems.Add(edt_algo.Text);
+   if validaItens then
+   begin
+      if pEdit then
+      begin
+        cdsContatos.Edit;
+        cdsContatosNUMCONTATO.AsInteger := cdsContatos.RecNo;
+      end
+      else
+      begin
+        cdsContatos.Append;
+        cdsContatosNUMCONTATO.AsInteger := cdsContatos.RecordCount + 1;
+      end;
+
+      cdsContatoscod_tipo_contato.AsInteger := StrToInt(edt_cod_contato.text);
+      cdsContatosTipoContato.AsString := edt_tipo_contato.text;
+      cdsContatosdescricao.asString := edt_nome_tipo_selecionado.text;
+      cdsContatosobservacao.asString := edt_algo.text;
+      cdsContatos.Post;
+      limparItens;
+   end
+end;
+
+procedure Tform_cadastro_fornecedores.AlterarItem;
+begin
+   if cdsContatos.RecordCount > 0 then
+   begin
+      if Alterar then
+      begin
+        edt_cod_contato.text := IntToStr(cdsContatoscod_tipo_contato.AsInteger);
+        edt_tipo_contato.text := cdsContatosTipoContato.AsString;
+        edt_nome_tipo_selecionado.text := cdsContatosdescricao.asString;
+        edt_algo.text := cdsContatosobservacao.asString;
+        alterar := false;
+      end
+      else
+      begin
+        adicionarItens(true);
+        alterar := true;
+      end;
+      bloquearItens(alterar);
+   end
+   else
+     MessageDlg( 'Lista de variações está vazia!', MtInformation, [ MbOK ], 0 );
 end;
 
 procedure Tform_cadastro_fornecedores.bloqueaiaBtnPesquisa;
@@ -142,6 +221,13 @@ begin
   self.btn_botao_alterar_item.Enabled := False;
   self.btn_botao_excluir_item.Enabled := False;
   self.btn_limpar_grid.Enabled := False;
+end;
+
+procedure Tform_cadastro_fornecedores.bloquearItens(pBloq: boolean);
+begin
+  btn_adicionar_contato.Enabled := pBloq;
+  btn_botao_excluir_item.Enabled := pBloq;
+  GridContatos.Enabled := pBloq;
 end;
 
 procedure Tform_cadastro_fornecedores.bloqueiaEdt;
@@ -173,13 +259,8 @@ end;
 procedure Tform_cadastro_fornecedores.btn_adicionar_contatoClick
   (Sender: TObject);
 begin
-  inherited;
-  if validaItens then
-  begin
-    adicionarItens;
-    limparItens;
-    edt_cod_contato.SetFocus;
-  end;
+  adicionarItens(false);
+  limparItens;
 end;
 
 procedure Tform_cadastro_fornecedores.btn_botao_alterar_itemClick
@@ -187,23 +268,15 @@ procedure Tform_cadastro_fornecedores.btn_botao_alterar_itemClick
 var
   Item: TListItem;
 begin
-  inherited;
-  edt_tipo_contato.Text := ListView_contatos.Selected.Caption;
-  edt_nome_tipo_selecionado.Text := ListView_contatos.Selected.SubItems[0];
-  edt_algo.Text := ListView_contatos.Selected.SubItems[1];
+  AlterarItem;
 end;
 
 procedure Tform_cadastro_fornecedores.btn_botao_excluir_itemClick
   (Sender: TObject);
 begin
-  inherited;
-  if ListView_contatos.ItemFocused.Index = ListView_contatos.Items.Count - 1
-  then
-    ListView_contatos.DeleteSelected
-  else
-    MessageDlg('Primeiro deve excluir o último contato!', MtInformation,
-      [MbOK], 0);
+  ExcluirItem;
 end;
+
 
 //procedure Tform_cadastro_fornecedores.btn_limpar_gridClick(Sender: TObject);
 //begin
@@ -252,17 +325,18 @@ var
 begin
   // inherited;
   aConsultaContatos.conhecaObj(aCtrlFornecedores.getCtrlTiposContatos,
-    oFornecedor.getoContato);
+    TipoContato);
   aux := aConsultaContatos.btn_botao_sair.Caption;
   aConsultaContatos.btn_botao_sair.Caption := 'Selecionar';
   aConsultaContatos.ShowModal;
   aConsultaContatos.btn_botao_sair.Caption := aux;
-  self.edt_cod_contato.Text := IntToStr(oFornecedor.getoContato.getCodigo);
-  self.edt_tipo_contato.Text := oFornecedor.getoContato.getTipoContato;
+  self.edt_cod_contato.Text := IntToStr(TipoContato.getCodigo);
+  self.edt_tipo_contato.Text := TipoContato.getTipoContato;
   lbl_nome_tipo.Caption := edt_tipo_contato.Text;
 end;
 
 procedure Tform_cadastro_fornecedores.carregaEdt;
+var contatoAux: Contato;
 begin
   inherited;
   if oFornecedor.getCodigo <> 0 then
@@ -277,10 +351,10 @@ begin
   self.edt_cod_cidade.Text := IntToStr(oFornecedor.getaCidade.getCodigo);
   self.edt_pesquisar_cidade.Text := oFornecedor.getaCidade.getCidade;
   self.edt_uf.Text := oFornecedor.getaCidade.getoEstado.getUF;
-  self.edt_cod_contato.Text := IntToStr(oFornecedor.getoContato.getCodigo);
-  self.edt_tipo_contato.Text := oFornecedor.getoContato.getTipoContato;
-  self.edt_nome_tipo_selecionado.Text := oFornecedor.getContatoAux1;
-  self.edt_algo.Text := oFornecedor.getContatoAux2;
+  //self.edt_cod_contato.Text := IntToStr(oFornecedor.getoContato.getCodigo);
+//  self.edt_tipo_contato.Text := oFornecedor.getoContato.getTipoContato;
+//  self.edt_nome_tipo_selecionado.Text := oFornecedor.getContatoAux1;
+//  self.edt_algo.Text := oFornecedor.getContatoAux2;
   self.edt_rg_ie.Text := oFornecedor.getIeRg;
   self.edt_cod_condicao_pagamento.Text :=
     IntToStr(oFornecedor.getaCondicao.getCodigo);
@@ -300,6 +374,19 @@ begin
   CpfCnpjFornecedor := oFornecedor.getCnpjCpf;
   self.edt_data_nasc.date := oFornecedor.GetData;
   self.memo_obs.text := oFornecedor.getObs;
+
+  for contatoAux in oFornecedor.getListaContatos do
+  begin
+    cdsContatos.Append;
+    cdsContatos.FieldByName('cod_tipo_contato').AsInteger := contatoAux.getaTipoContato.getCodigo;
+    cdsContatos.FieldByName('observacao').AsString       := contatoAux.getobservacao;
+    cdsContatos.FieldByName('descricao').AsString         := contatoAux.getadescricao;
+    cdsContatos.FieldByName('tipoContato').Asstring       := contatoAux.getaTipoContato.getTipoContato;
+    cdsContatos.FieldByName('numContato').AsInteger       := contatoAux.getnumeroContato;
+    cdsContatos.Post;
+  end;
+  cdsContatos.First;
+  cdsContatos.EnableControls;
 end;
 
 procedure Tform_cadastro_fornecedores.ComboBox_tipo_fornecedorChange
@@ -356,11 +443,46 @@ begin
   self.memo_obs.enabled := true;
 end;
 
+procedure Tform_cadastro_fornecedores.ExcluirItem;
+var i: integer;
+begin
+  if cdsContatos.RecordCount > 0 then
+  begin
+    cdsContatos.Delete;
+    cdsContatos.First;
+    for I := 0 to cdsContatos.RecordCount - 1 do
+    begin
+      cdsContatos.edit;
+      cdsContatosNUMCONTATO.AsInteger := I+1;
+      cdsContatos.post;
+    end;
+  end
+  else
+    MessageDlg( 'Lista de Contatos está vazia!', MtInformation, [ MbOK ], 0 );
+end;
+
 procedure Tform_cadastro_fornecedores.FormActivate(Sender: TObject);
 begin
   inherited;
   if self.btn_botao_salvar.Caption = 'Salvar' then
     edt_nome_razao_social.SetFocus;
+end;
+
+procedure Tform_cadastro_fornecedores.FormCreate(Sender: TObject);
+begin
+  if cdsContatos.Active then
+    cdsContatos.Close;
+  cdsContatos.Open;
+  cdsContatos.EmptyDataSet;
+
+  TipoContato := TiposContatos.crieObj;
+
+end;
+
+procedure Tform_cadastro_fornecedores.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  TipoContato.destrua_se;
 end;
 
 procedure Tform_cadastro_fornecedores.FormShow(Sender: TObject);
@@ -396,6 +518,8 @@ begin
   self.edt_data_ult_alt.Clear;
   self.memo_obs.clear;
   self.edt_data_nasc.date := now;
+  Alterar := true;
+  cdsContatos.EmptyDataSet;
 end;
 
 procedure Tform_cadastro_fornecedores.limparItens;
@@ -428,6 +552,7 @@ begin
 end;
 
 procedure Tform_cadastro_fornecedores.salvar;
+var AuxContato: Contato;
 begin
   inherited;
   if validaFormulario then
@@ -443,10 +568,10 @@ begin
     oFornecedor.getaCidade.setCodigo(StrToInt(self.edt_cod_cidade.Text));
     oFornecedor.getaCidade.setCidade(self.edt_pesquisar_cidade.Text);
     oFornecedor.getaCidade.getoEstado.setUF(self.edt_uf.Text);
-    oFornecedor.getoContato.setCodigo(StrToInt(self.edt_cod_contato.Text));
-    oFornecedor.getoContato.setTipoContato(self.edt_tipo_contato.Text);
-    oFornecedor.setContatoAux1(self.edt_nome_tipo_selecionado.Text);
-    oFornecedor.setContatoAux2(self.edt_algo.Text);
+//    oFornecedor.getoContato.setCodigo(StrToInt(self.edt_cod_contato.Text));
+//    oFornecedor.getoContato.setTipoContato(self.edt_tipo_contato.Text);
+//    oFornecedor.setContatoAux1(self.edt_nome_tipo_selecionado.Text);
+//    oFornecedor.setContatoAux2(self.edt_algo.Text);
     oFornecedor.setCnpjCpf(self.edt_cpf_cnpj.Text);
     oFornecedor.setIeRg(self.edt_rg_ie.Text);
     oFornecedor.getaCondicao.setCodigo
@@ -459,6 +584,29 @@ begin
     oFornecedor.setTipoForn(self.ComboBox_tipo_fornecedor.Text);
     oFornecedor.setObs(self.memo_obs.text);
     oFornecedor.setData(self.edt_data_nasc.date);
+        cdsContatos.DisableControls;
+    oFornecedor.getListaContatos.Clear;
+    try
+      cdsContatos.First;
+      while not(cdsContatos.Eof) do
+        begin
+          AuxContato := Contato.crieObj;
+          with AuxContato, cdsContatos do
+            begin
+              getaTipoContato.setCodigo(FieldByName('cod_tipo_contato').AsInteger);
+              getaTipoContato.setTipoContato(FieldByName('TipoContato').AsString);
+              setDescricao(FieldByName('Descricao').AsString);
+              SetObservacao( FieldByName('Observacao').Asstring);
+              SetNumeroContato( FieldByName('numContato').AsInteger);
+              SetCodTipoPortador(TipoPortador(1));
+            end;
+          oFornecedor.getListaContatos.Add(AuxContato);
+          cdsContatos.Next;
+        end;
+    finally
+      cdsContatos.EnableControls;
+    end;
+
     if self.btn_botao_salvar.Caption = 'Salvar' then // INCLUIR-ALTERAR
     begin
       if (oFornecedor.getCodigo = 0) then
@@ -638,23 +786,23 @@ begin
   Result := True;
 end;
 
-function Tform_cadastro_fornecedores.validaItens: Boolean;
-begin
-  Result := False;
-  if self.edt_tipo_contato.Text = '' then
-  begin
-    MessageDlg('O campo Tipo de Contato é obrigatório!', MtInformation,
-      [MbOK], 0);
-    edt_tipo_contato.SetFocus;
-    Exit;
-  end;
-  if self.edt_nome_tipo_selecionado.Text = '' then
-  begin
-    MessageDlg('O campo é obrigatório!', MtInformation, [MbOK], 0);
-    edt_nome_tipo_selecionado.SetFocus;
-    Exit;
-  end;
-  Result := True;
-end;
+//function Tform_cadastro_fornecedores.validaItens: Boolean;
+//begin
+//  Result := False;
+//  if self.edt_tipo_contato.Text = '' then
+//  begin
+//    MessageDlg('O campo Tipo de Contato é obrigatório!', MtInformation,
+//      [MbOK], 0);
+//    edt_tipo_contato.SetFocus;
+//    Exit;
+//  end;
+//  if self.edt_nome_tipo_selecionado.Text = '' then
+//  begin
+//    MessageDlg('O campo é obrigatório!', MtInformation, [MbOK], 0);
+//    edt_nome_tipo_selecionado.SetFocus;
+//    Exit;
+//  end;
+//  Result := True;
+//end;
 
 end.

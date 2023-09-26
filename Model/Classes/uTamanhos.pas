@@ -1,9 +1,6 @@
 unit uTamanhos;
-
 interface
-
 uses uPai;
-
 type Tamanhos = class(Pai)
   private
   protected
@@ -14,12 +11,10 @@ type Tamanhos = class(Pai)
   public
     constructor crieObj;
     destructor destrua_se;
-
     procedure setSiglaTamanho ( pSiglaTamanho : string );
     procedure setLargura ( pLargura : string );
     procedure setAltura ( pAltura : string );
     procedure setComprimento ( pComprimento : string );
-
     function getSiglaTamanho : string;
     function getLargura : string;
     function getAltura : string;
@@ -27,42 +22,32 @@ type Tamanhos = class(Pai)
     function clone : Tamanhos;
     procedure limpardados;
 end;
-
 implementation
-
 { Tamanhos }
-
 constructor Tamanhos.crieObj;
 begin
   inherited;
   self.limpardados;
 end;
-
 destructor Tamanhos.destrua_se;
 begin
-
 end;
-
 function Tamanhos.getAltura: string;
 begin
   Result:= altura;
 end;
-
 function Tamanhos.getComprimento: string;
 begin
   Result:= comprimento;
 end;
-
 function Tamanhos.getLargura: string;
 begin
   Result:= largura;
 end;
-
 function Tamanhos.getSiglaTamanho: string;
 begin
   Result:= siglaTamanho;
 end;
-
 procedure Tamanhos.limpardados;
 begin
   inherited;
@@ -76,22 +61,18 @@ procedure Tamanhos.setAltura(pAltura: string);
 begin
   altura:= pAltura;
 end;
-
 procedure Tamanhos.setComprimento(pComprimento: string);
 begin
   comprimento:= pComprimento;
 end;
-
 procedure Tamanhos.setLargura(pLargura: string);
 begin
   largura:= pLargura;
 end;
-
 procedure Tamanhos.setSiglaTamanho(pSiglaTamanho: string);
 begin
   siglaTamanho:= pSiglaTamanho;
 end;
-
 function Tamanhos.clone: Tamanhos;
 begin
   Result:= Tamanhos.crieObj;
@@ -104,5 +85,4 @@ begin
   Result.setUltAlt( ultAlt );
   Result.setCodUsu( codUsu );
 end;
-
 end.

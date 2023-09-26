@@ -67,7 +67,7 @@ end;
 procedure Tform_cadastro_formas_pagamentos.desbloqueiaEdt;
 begin
   inherited;
-  self.edt_forma_pagamento.Enabled:= False;
+  self.edt_forma_pagamento.Enabled:= True;
 end;
 
 procedure Tform_cadastro_formas_pagamentos.limpaEdt;

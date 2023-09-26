@@ -25,6 +25,7 @@ type
     function getObs: string;
     function clone: Clientes;
     procedure limparDados;
+    procedure setCodigoListaContatos;
   end;
 
 implementation
@@ -78,6 +79,15 @@ begin
   umaCondicao := pCondicao;
 end;
 
+procedure Clientes.setCodigoListaContatos;
+var i: integer;
+begin
+   for i := 0 to Self.listaContatos.Count - 1 do
+   begin
+       Self.listaContatos[i].setCodPortador(Self.GetCodigo);
+   end;
+end;
+
 procedure Clientes.setLimiteCredito(pLimite: currency);
 begin
   limite_credito := pLimite;
@@ -108,9 +118,9 @@ begin
   Result.setBairro(bairro);
   Result.setCep(cep);
   Result.setaCidade(umaCidade.clone);
-  Result.setoContato(umContato.clone);
-  Result.setContatoAux1(contato_aux1);
-  Result.setContatoAux2(contato_aux2);
+//  Result.setoContato(umContato.clone);
+//  Result.setContatoAux1(contato_aux1);
+//  Result.setContatoAux2(contato_aux2);
   Result.setCnpjCpf(cnpj_cpf);
   Result.setIeRg(ie_rg);
   Result.setaCondicao(umaCondicao.clone);
@@ -118,6 +128,7 @@ begin
   Result.setaCondicao(umaCondicao.clone);
   Result.setLimiteCredito(limite_credito);
   Result.setObs(obs);
+  Result.setListaContatos(ListaContatos);
 end;
 
 end.

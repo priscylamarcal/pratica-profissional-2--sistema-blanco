@@ -1,10 +1,12 @@
 unit uDaoClientes;
 interface
 uses uDAO, uFilterSearch, uClientes, uCidades, uTiposContatos, uFuncionarios,
-  uCondicoesPagamentos;
+  uCondicoesPagamentos, Data.DB, FireDAC.Comp.Client;
 type daoClientes = class( DAO )
   private
+    function RetornaCodInserido:Integer;
   protected
+
   public
     constructor crieObj;                              override;
     function getDS : TObject;                         override;
@@ -27,7 +29,7 @@ var mCliente : Clientes; mCidade : Cidades; mContato : TiposContatos;
 begin
   mCliente:= Clientes( pObj );
   mCidade:= mCliente.getaCidade;
-  mContato:= mCliente.getoContato;
+  //mContato:= mCliente.getoContato;
   mFuncionario:= mCliente.getoFuncionario;
   mCondicao:= mCliente.getaCondicao;
     mCliente.setCodigo(aDM.QClientes.FieldByName('CODCLIENTE').Value);
@@ -38,8 +40,8 @@ begin
     mCliente.setComplemento(aDM.QClientes.FieldByName('COMPLEMENTO').AsString);
     mCliente.setBairro(aDM.QClientes.FieldByName('BAIRRO').AsString);
     mCliente.setCep(aDM.QClientes.FieldByName('CEP').AsString);
-    mCliente.setContatoAux1(aDM.QClientes.FieldByName('CONTATO_AUX1').AsString);
-    mCliente.setContatoAux2(aDM.QClientes.FieldByName('CONTATO_AUX2').AsString);
+    //mCliente.setContatoAux1(aDM.QClientes.FieldByName('CONTATO_AUX1').AsString);
+    //mCliente.setContatoAux2(aDM.QClientes.FieldByName('CONTATO_AUX2').AsString);
     mCliente.setCnpjCpf(aDM.QClientes.FieldByName('CNPJ').AsString);
     mCliente.setIeRg(aDM.QClientes.FieldByName('IE').AsString);
     mCliente.setLimiteCredito(aDM.QClientes.FieldByName('LIMITE_CREDITO').Value);
@@ -48,7 +50,7 @@ begin
     mCliente.setUltAlt(aDM.QClientes.FieldByName('ULTALT').AsDateTime);
     mCliente.getaCidade.setCodigo(aDM.QClientes.FieldByName('CODCIDADE').Value);
     mCliente.getoFuncionario.setCodigo(aDM.QClientes.FieldByName('CODFUNC').Value);
-    mCliente.getoContato.setCodigo(aDM.QClientes.FieldByName('CODCONTATO').Value);
+    //mCliente.getoContato.setCodigo(aDM.QClientes.FieldByName('CODCONTATO').Value);
     mCliente.getaCondicao.setCodigo(aDM.QClientes.FieldByName('CODCONDICAO').Value);
 end;
 constructor daoClientes.crieObj;
@@ -97,13 +99,38 @@ begin
     aDM.QClientes.Open;
     result:= '';
 end;
+function daoClientes.RetornaCodInserido: Integer;
+const
+  SQL =//consulta que retorna qual a posição atual do generator da tabela
+    'select gen_id(gen_Clientes, 0) as new_id from rdb$database';
+var
+  aQuery : TFDQuery;
+begin
+  aQuery := TFDQuery.Create(nil);
+  try
+    aQuery.Connection  := aDM.Conexao;
+    aQuery.Transaction := aDM.Transacao;
+    if aQuery.Active then
+      aQuery.Close;
+    aQuery.SQL.Clear;
+    aQuery.SQL.Add(SQL);
+    aQuery.Open;
+    if not(aQuery.IsEmpty) then
+      Result := aQuery.FieldByName('NEW_ID').AsInteger
+    else
+      Result := 0;
+  finally
+    FreeAndNil(aQuery);
+  end;
+end;
+
 function daoClientes.salvar(pObj: TObject): string;
 var mCliente : Clientes; mCidade : Cidades; mContato : TiposContatos;
     mFuncionario : Funcionarios; mCondicao : CondicoesPagamentos;
 begin
   mCliente:= Clientes( pObj );
   mCidade:= mCliente.getaCidade;
-  mContato:= mCliente.getoContato;
+  //mContato:= mCliente.getoContato;
   mFuncionario:= mCliente.getoFuncionario;
   mCondicao:= mCliente.getaCondicao;
   aDM.Transacao.StartTransaction;
@@ -123,8 +150,8 @@ begin
     aDM.QClientes.FieldByName('COMPLEMENTO').AsString:= mCliente.getComplemento;
     aDM.QClientes.FieldByName('BAIRRO').AsString:= mCliente.getBairro;
     aDM.QClientes.FieldByName('CEP').AsString:= mCliente.getCep;
-    aDM.QClientes.FieldByName('CONTATO_AUX1').AsString:= mCliente.getContatoAux1;
-    aDM.QClientes.FieldByName('CONTATO_AUX2').AsString:= mCliente.getContatoAux2;
+    //aDM.QClientes.FieldByName('CONTATO_AUX1').AsString:= mCliente.getContatoAux1;
+    //aDM.QClientes.FieldByName('CONTATO_AUX2').AsString:= mCliente.getContatoAux2;
     aDM.QClientes.FieldByName('CNPJ').AsString:= mCliente.getCnpjCpf;
     aDM.QClientes.FieldByName('IE').AsString:= mCliente.getIeRg;
     aDM.QClientes.FieldByName('LIMITE_CREDITO').AsFloat:= mCliente.getLimite;
@@ -135,12 +162,15 @@ begin
     //aDM.QClientes.FieldByName('CIDADE').AsString:= mCidade.getCidade;
     //aDM.QClientes.FieldByName('UF').AsString:= mCidade.getoEstado.getUF;
     aDM.QClientes.FieldByName('CODFUNC').AsInteger:= mFuncionario.getCodigo;
-    aDM.QClientes.FieldByName('CODCONTATO').AsInteger:= mContato.getCodigo;
+    //aDM.QClientes.FieldByName('CODCONTATO').AsInteger:= mContato.getCodigo;
     //aDM.QClientes.FieldByName('CONTATO').AsString:= mContato.getTipoContato;
     aDM.QClientes.FieldByName('CODCONDICAO').AsInteger:= mCondicao.getCodigo;
     //aDM.QClientes.FieldByName('CONDICAO').AsString:= mCondicao.getCondicao;
     aDM.QClientes.Post;
     aDM.Transacao.Commit;
+    result := 'SUCESSO';
+    if mCliente.getCodigo = 0 then
+      mCliente.setCodigo( Self.RetornaCodInserido);
   except
     aDM.Transacao.Rollback;
   end;

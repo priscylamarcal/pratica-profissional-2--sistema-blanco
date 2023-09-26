@@ -82,6 +82,7 @@ type
 
     procedure btn_adicionar_contatoMouseEnter( Sender: TObject);
     procedure btn_adicionar_contatoMouseLeave( Sender: TObject);
+    procedure edt_descontoChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -127,6 +128,25 @@ procedure Tform_cadastro_compras.desbloqueiaEdt;
 begin
   inherited;
 
+end;
+
+procedure Tform_cadastro_compras.edt_descontoChange(Sender: TObject);
+var
+  qtd, valor_unit, desconto, mult: Currency;
+begin
+  qtd := 0;
+  valor_unit := 0;
+  desconto := 0;
+
+  qtd := StrToInt(edt_quant_produto.Text);
+  valor_unit := StrToCurr(edt_valor_unitario.Text);
+
+  // Verifique se o campo de desconto não está vazio
+  if Trim(edt_desconto.Text) <> '' then
+    desconto := StrToCurr(edt_desconto.Text);
+
+  mult := (qtd * valor_unit) - desconto;
+  edt_valor_total.Text := CurrToStr(mult);
 end;
 
 procedure Tform_cadastro_compras.limpaEdt;

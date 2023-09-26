@@ -27,6 +27,7 @@ type
     function getObs: string;
     function clone : Fornecedores;
     procedure limparDados;
+    procedure setCodigoListaContatos;
 end;
 implementation
 
@@ -73,6 +74,15 @@ begin
   umaCondicao := pCondicao;
 end;
 
+procedure Fornecedores.setCodigoListaContatos;
+  var i: integer;
+begin
+   for i := 0 to Self.listaContatos.Count - 1 do
+   begin
+       Self.listaContatos[i].setCodPortador(Self.GetCodigo);
+   end;
+end;
+
 procedure Fornecedores.setData(pData: TDateTime);
 begin
   data := pData;
@@ -103,15 +113,16 @@ begin
   Result.setBairro(bairro);
   Result.setCep(cep);
   Result.setaCidade(umaCidade.clone);
-  Result.setoContato(umContato.clone);
-  Result.setContatoAux1(contato_aux1);
-  Result.setContatoAux2(contato_aux2);
+//  Result.setoContato(umContato.clone);
+//  Result.setContatoAux1(contato_aux1);
+//  Result.setContatoAux2(contato_aux2);
   Result.setCnpjCpf(cnpj_cpf);
   Result.setIeRg(ie_rg);
   Result.setaCondicao(umaCondicao.clone);
   Result.setTipoForn(tipo_forn);
   Result.setData(data);
   Result.setObs(obs);
+  Result.setListaContatos(ListaContatos);
 end;
 
 end.

@@ -408,7 +408,7 @@ inherited form_cadastro_condicao_pagamento: Tform_cadastro_condicao_pagamento
         MudarCor = clCream
       end
       object pnl_adicionar_contato: TPanel
-        Left = 487
+        Left = 515
         Top = 300
         Width = 100
         Height = 40
@@ -435,11 +435,12 @@ inherited form_cadastro_condicao_pagamento: Tform_cadastro_condicao_pagamento
           OnClick = btn_adicionar_contatoClick
           OnMouseEnter = btn_adicionar_contatoMouseEnter
           OnMouseLeave = btn_adicionar_contatoMouseLeave
-          ExplicitTop = -8
+          ExplicitLeft = 4
+          ExplicitTop = 2
         end
       end
       object pnl_remover_item: TPanel
-        Left = 616
+        Left = 630
         Top = 300
         Width = 100
         Height = 40
@@ -477,7 +478,7 @@ inherited form_cadastro_condicao_pagamento: Tform_cadastro_condicao_pagamento
         end
       end
       object pnl_botao_alterar_item: TPanel
-        Left = 220
+        Left = 200
         Top = 300
         Width = 100
         Height = 40
@@ -511,7 +512,8 @@ inherited form_cadastro_condicao_pagamento: Tform_cadastro_condicao_pagamento
           OnClick = btn_botao_alterar_itemClick
           OnMouseEnter = btn_botao_alterar_itemMouseEnter
           OnMouseLeave = btn_botao_alterar_itemMouseLeave
-          ExplicitTop = -9
+          ExplicitLeft = 40
+          ExplicitTop = 2
         end
       end
       object pbl_limpar_grid: TPanel
