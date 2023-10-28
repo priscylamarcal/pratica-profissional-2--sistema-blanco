@@ -1,0 +1,98 @@
+unit uParcelasCompras;
+
+interface
+uses Classes,
+     SysUtils,
+     uPai,
+     uCondicoesPagamentos;
+
+type ParcelaCompra = class
+
+  private
+  protected
+	numeroParcela: integer;
+  condicaoPagamento: CondicoesPagamentos;
+	dataVencimento: TdateTime;
+  ValorParcela: Currency;
+  public
+     constructor crieObj;
+     destructor destrua_se;
+     function getaNumeroParcela: integer;
+     function getcondicaoPagamento: CondicoesPagamentos;
+     function getdataVencimento: TdateTime;
+     function getValorParcela: Currency;
+
+     procedure setNumeroVariacao(pNumeroVariacao: integer);
+     procedure setcondicaoPagamento(pCondicaoPagamento: CondicoesPagamentos);
+     procedure setdataVencimento(pdataVencimento: TdateTime);
+     procedure setvalorParcela(pValorParcela: currency);
+
+     function clone : ParcelaCompra;
+     procedure limparDados;
+end;
+implementation
+
+{ ParcelaCompra }
+
+function ParcelaCompra.clone: ParcelaCompra;
+begin
+
+end;
+
+constructor ParcelaCompra.crieObj;
+begin
+
+end;
+
+destructor ParcelaCompra.destrua_se;
+begin
+
+end;
+
+function ParcelaCompra.getaNumeroParcela: integer;
+begin
+
+end;
+
+function ParcelaCompra.getcondicaoPagamento: CondicoesPagamentos;
+begin
+
+end;
+
+function ParcelaCompra.getdataVencimento: TdateTime;
+begin
+
+end;
+
+function ParcelaCompra.getValorParcela: Currency;
+begin
+
+end;
+
+procedure ParcelaCompra.limparDados;
+begin
+
+end;
+
+procedure ParcelaCompra.setcondicaoPagamento(
+  pCondicaoPagamento: CondicoesPagamentos);
+begin
+
+end;
+
+procedure ParcelaCompra.setdataVencimento(pdataVencimento: TdateTime);
+begin
+
+end;
+
+procedure ParcelaCompra.setNumeroVariacao(pNumeroVariacao: integer);
+begin
+
+end;
+
+procedure ParcelaCompra.setvalorParcela(pValorParcela: currency);
+begin
+
+end;
+
+end.

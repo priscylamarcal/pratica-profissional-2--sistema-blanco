@@ -1,0 +1,276 @@
+unit uDaoParcelasCompras;
+
+interface
+
+uses uDAO,
+  uFilterSearch, uParcelasCompras, uVariacoesRoupas,
+
+  System.Generics.Collections, System.SysUtils, uFornecedores, uCompras;
+
+type
+  daoParcelaCompra = class(DAO)
+  private
+
+  protected
+  public
+    constructor crieObj; override;
+    function getDS: TObject; override;
+    function pesquisar(AFilter: TFilterSearch; pChave: string): string;
+      override;
+    function salvar(pObj: TObject): string; override;
+    function excluir(pObj: TObject): string; override;
+    function carregar(pObj: TObject): string; override;
+    function salvarLista(lista: TObjectList<ParcelaCompra>): string;
+    function carregarLista(lista: TObjectList<ParcelaCompra>): string;
+
+    function RetornaListaParcelaCompra(const ACompra: Compras) : TObjectList<ParcelaCompra>;
+    function DeleteListaParcelaCompra(const ACompra: Compras): Boolean;
+  end;
+
+implementation
+uses
+  FireDAC.Comp.Client;
+{ daoVariacoesRoupas }
+
+function daoParcelaCompra.carregar(pObj: TObject): string;
+var
+  mParcelaCompra: ParcelaCompra;
+begin
+  mParcelaCompra := ParcelaCompra(pObj);
+
+  mParcelaCompra.setNumeroParcela(aDM.QParcelasCompras.FieldByName('NUMERO_PARCELA').AsInteger);
+
+  mParcelaCompra.getCondicaoPagamento.setCodigo
+    (aDM.QParcelasCompras.FieldByName('CODCONDICAO').AsInteger);
+
+  mParcelaCompra.getFornecedor.setCodigo(aDM.QParcelasCompras.FieldByName('COD_FORNECEDOR').AsInteger);
+  mParcelaCompra.setValorParcela(aDM.QParcelasCompras.FieldByName('VALOR').AsCurrency);
+   mParcelaCompra.setDataVencimento((aDM.QParcelasCompras.FieldByName('DATA_VENCIMENTO').AsDatetime));
+
+  mParcelaCompra.setModelo((aDM.QParcelasCompras.FieldByName('MODELO').AsString));
+  mParcelaCompra.setserie((aDM.QParcelasCompras.FieldByName('serie').AsString));
+  mParcelaCompra.setNum_Nota((aDM.QParcelasCompras.FieldByName('NUMERO').AsString));
+
+end;
+
+function daoParcelaCompra.RetornaListaParcelaCompra(const ACompra: Compras)
+  : TObjectList<ParcelaCompra>;
+var
+  AParcelaCompra: ParcelaCompra;
+  AQuery  : TFDQuery;
+begin
+  Result := nil;
+  AQuery := TFDQuery.Create(nil);
+  try
+    AQuery.Connection  := adm.Conexao;
+    AQuery.Transaction := aDM.Transacao;
+
+    if (AQuery.Active) then
+     AQuery.Close;
+    AQuery.SQL.Clear;
+
+    AQuery.SQL.Add('SELECT * FROM PARCELAS_COMPRAS');
+    AQuery.SQL.Add('WHERE MODELO = :MODELO AND SERIE = :SERIE AND NUMERO = :NUMERO ');
+    AQuery.SQL.Add('AND COD_FORNECEDOR = :COD_FORNECEDOR ');
+    AQuery.ParamByName('MODELO').AsString := aCompra.getModelo;
+    AQuery.ParamByName('SERIE').AsString := ACompra.getSerie;
+    AQuery.ParamByName('NUMERO').AsString := aCompra.getNumNota;
+    AQuery.ParamByName('COD_FORNECEDOR').AsInteger := aCompra.getUmFornecedor.getCodigo;
+    AQuery.Open;
+
+    AQuery.First;
+
+    Result := TObjectList<ParcelaCompra>.Create;
+    while not(AQuery.Eof) do
+    begin
+      AParcelaCompra := ParcelaCompra.crieObj;
+
+      with AParcelaCompra, AQuery do
+      begin
+
+        getFornecedor.setCodigo(FieldByName('COD_FORNECEDOR').AsInteger);
+
+        setNumeroParcela(FieldByName('NUMERO_PARCELA').AsInteger);
+
+        getCondicaoPagamento.setCodigo
+          (FieldByName('CODCONDICAO').AsInteger);
+
+        getFornecedor.setCodigo(FieldByName('COD_FORNECEDOR').AsInteger);
+        setValorParcela(FieldByName('VALOR').AsCurrency);
+        setDataVencimento(FieldByName('DATA_VENCIMENTO').AsDatetime);
+
+        setModelo(FieldByName('MODELO').AsString);
+        setserie(FieldByName('serie').AsString);
+        setNum_Nota(FieldByName('NUMERO').AsString);
+
+      end;
+
+      Result.Add(AParcelaCompra);
+      AQuery.Next;
+    end;
+
+    AQuery.Close;
+  finally
+    FreeAndNil(AQuery);
+  end;
+end;
+
+function daoParcelaCompra.carregarLista(lista: TObjectList<ParcelaCompra>): string;
+begin
+
+end;
+
+constructor daoParcelaCompra.crieObj;
+begin
+  inherited;
+end;
+
+function daoParcelaCompra.DeleteListaParcelaCompra(const ACompra: Compras): Boolean;
+begin
+  if (aDM.QParcelasCompras.Active) then
+    aDM.QParcelasCompras.Close;
+
+  if not aDM.Conexao.InTransaction then
+    aDM.Transacao.StartTransaction;
+  try
+    aDM.QParcelasCompras.SQL.Clear;
+    aDM.QParcelasCompras.SQL.Add('DELETE FROM PARCELAS_COMPRAS WHERE MODELO = :MODELO AND SERIE = :SERIE AND NUMERO = :NUMERO ');
+    aDM.QParcelasCompras.SQL.Add('AND COD_FORNECEDOR = :COD_FORNECEDOR ');
+    aDM.QParcelasCompras.ParamByName('MODELO').AsString := aCompra.getModelo;
+    aDM.QParcelasCompras.ParamByName('SERIE').AsString := ACompra.getSerie;
+    aDM.QParcelasCompras.ParamByName('NUMERO').AsString := aCompra.getNumNota;
+    aDM.QParcelasCompras.ParamByName('COD_FORNECEDOR').AsInteger := aCompra.getUmFornecedor.getCodigo;
+    aDM.QParcelasCompras.ExecSQL;
+
+    Result := (aDM.QParcelasCompras.RowsAffected > 0);
+
+    aDM.Transacao.Commit;
+  except
+    on e: Exception do
+    begin
+      raise Exception.Create('Erro:' + e.Message);
+      Result := False;
+      aDM.Transacao.Rollback;
+    end;
+  end;
+end;
+
+function daoParcelaCompra.excluir(pObj: TObject): string;
+begin
+  aDM.Conexao.StartTransaction;
+
+  aDM.QParcelasCompras.SQL.Clear;
+  aDM.QParcelasCompras.SQL.Add
+    ('DELETE FROM PARCELAS_COMPRAS WHERE MODELO = :MODELO AND SERIE = :SERIE AND NUMERO = :NUMERO ');
+  aDM.QParcelasCompras.SQL.Add('AND COD_FORNECEDOR = :COD_FORNECEDOR ');
+  aDM.QParcelasCompras.ParamByName('MODELO').AsString := Compras(pObj).getModelo;
+  aDM.QParcelasCompras.ParamByName('SERIE').AsString := Compras(pObj).getSerie;
+  aDM.QParcelasCompras.ParamByName('NUMERO').AsString := Compras(pObj).getNumNota;
+  aDM.QParcelasCompras.ParamByName('COD_FORNECEDOR').AsInteger := Compras(pObj).getUmFornecedor.getCodigo;
+  aDM.QParcelasCompras.ExecSQL;
+
+  try
+    aDM.Conexao.Commit;
+    Result := 'SUCESSO';
+  except
+    aDM.Conexao.Rollback;
+    Result := 'ERRO';
+  end;
+end;
+
+function daoParcelaCompra.getDS: TObject;
+begin
+  Result := aDM.DSParcelasCompras;
+end;
+
+function daoParcelaCompra.pesquisar(AFilter: TFilterSearch; pChave: string): string;
+var
+  msql: string;
+begin
+
+  case AFilter.TipoConsulta of
+
+//    TpCCodigo:
+//      begin
+//        msql := 'SELECT * FROM VariacoesRoupas WHERE COD =' + IntToStr(AFilter.Codigo);
+//      end;
+
+    // TpCParam:
+    // begin
+    // msql:= ( 'SELECT * FROM VariacoesRoupas WHERE ESTADO LIKE  ' + QuotedStr( '%' + AFilter.Parametro + '%' ) );
+    // end;
+
+    TpCTODOS:
+      begin
+        msql := 'SELECT * FROM PARCELAS_COMPRAS';
+      end;
+
+  end;
+
+  aDM.QParcelasCompras.Active   := False;
+  aDM.QParcelasCompras.SQL.Text := msql;
+  aDM.QParcelasCompras.Open;
+  Result := '';
+end;
+
+function daoParcelaCompra.salvar(pObj: TObject): string;
+var
+  mParcelaCompra: ParcelaCompra;
+
+begin
+  mParcelaCompra := ParcelaCompra(pObj);
+
+  if aDM.QParcelasCompras.Active then
+    aDM.QParcelasCompras.Close;
+  aDM.QParcelasCompras.SQL.Clear;
+
+  if not(aDM.Conexao.InTransaction) then
+    aDM.Transacao.StartTransaction;
+  try
+    aDM.QParcelasCompras.SQL.Add('insert into PARCELAS_COMPRAS');
+    aDM.QParcelasCompras.SQL.Add('(NUMERO_PARCELA, VALOR, DATA_VENCIMENTO, CODCONDICAO, MODELO, SERIE, NUMERO, COD_FORNECEDOR)');
+    aDM.QParcelasCompras.SQL.Add('values');
+    aDM.QParcelasCompras.SQL.Add('( :NUMERO_PARCELA, :VALOR, :DATA_VENCIMENTO, :CODCONDICAO, :MODELO, :SERIE, :NUMERO, :COD_FORNECEDOR)');
+
+    aDM.QParcelasCompras.ParamByName('NUMERO_PARCELA').AsInteger  := mParcelaCompra.getaNumeroParcela;
+    aDM.QParcelasCompras.ParamByName('VALOR').AsCurrency  := mParcelaCompra.getValorParcela;
+    aDM.QParcelasCompras.ParamByName('CODCONDICAO').AsInteger  := mParcelaCompra.getcondicaoPagamento.getCodigo;
+    aDM.QParcelasCompras.ParamByName('DATA_VENCIMENTO').AsDateTime  := mParcelaCompra.getDataVencimento;
+
+
+    aDM.QParcelasCompras.ParamByName('MODELO').AsString := mParcelaCompra.getmodelo;
+    aDM.QParcelasCompras.ParamByName('SERIE').AsString := mParcelaCompra.getSerie;
+    aDM.QParcelasCompras.ParamByName('numero').AsString := mParcelaCompra.getNum_Nota;
+    aDM.QParcelasCompras.ParamByName('cod_fornecedor').AsInteger := mParcelaCompra.getFornecedor.getCodigo;
+
+
+    aDM.QParcelasCompras.ExecSQL;
+
+    aDM.Transacao.Commit;
+    Result := 'S';
+  except
+    on e: Exception do
+    begin
+      raise Exception.Create('Erro: ' + e.Message);
+      Result := e.Message;
+      aDM.Transacao.Rollback;
+    end;
+  end;
+end;
+
+function daoParcelaCompra.salvarLista(lista: TObjectList<ParcelaCompra>): string;
+var
+  I: Integer;
+  Obj: TObject;
+  CodRoupa: Integer;
+begin
+  // Result := False;
+
+  for I := 0 to lista.Count - 1 do
+  begin
+    Obj := lista[I];
+    Result := Self.salvar(Obj);
+  end;
+end;
+
+end.

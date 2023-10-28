@@ -234,9 +234,9 @@ inherited form_cadastro_fornecedores: Tform_cadastro_fornecedores
       object lbl_tipo_contato: TLabel [19]
         Left = 94
         Top = 151
-        Width = 91
+        Width = 103
         Height = 16
-        Caption = 'Tipo de Contato'
+        Caption = 'Tipo de Contato *'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13

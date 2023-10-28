@@ -109,9 +109,7 @@ var
   mTipoContato : TiposContatos;
 begin
   mTipoContato := TiposContatos(pObj);
-  Result := not(aDM.QFornecedores.Locate('CODCONTATO', mTipoContato.getCodigo, [])) and
-    not(aDM.QClientes.Locate('CODCONTATO', mTipoContato.getCodigo, [])) and
-    not(aDM.QFuncionarios.Locate('CODCONTATO', mTipoContato.getCodigo, []));
+  Result := not(aDM.QContatos.Locate('COD_TIPO_CONTATO', mTipoContato.getCodigo, []));
 end;
 
 function daoTiposContatos.VerificaExiste(aChave: string): Boolean;

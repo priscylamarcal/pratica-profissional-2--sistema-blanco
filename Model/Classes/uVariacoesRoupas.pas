@@ -7,18 +7,18 @@ uses Classes,
      uPai,
      uCores,
 	   uTamanhos;
+     //uRoupas;
 
 type VariacaoRoupa = class
 
   private
-
-
   protected
 	numeroVariacao: integer;
 	Cor: Cores;
 	Tamanho: Tamanhos;
 	codigoVariacao: string;
   codRoupa: integer;
+  //Roupa: Roupas;
   public
      constructor crieObj;
      destructor destrua_se;
@@ -27,12 +27,14 @@ type VariacaoRoupa = class
      function getaTamanho: Tamanhos;
      function getacodigoVariacao: string;
      function getaCodRoupa: integer;
+     //function getRoupa: Roupas;
 
      procedure setNumeroVariacao(pNumeroVariacao: integer);
      procedure setCor(pCor: Cores);
      procedure setTamanho(pTamanho: Tamanhos);
      procedure setCodigoVariacao(pCodigoVariacao: string);
      procedure setCodRoupa(pCodroupa: integer);
+     //procedure setRoupa(pRoupa: Roupas);
 
      function clone : VariacaoRoupa;
      procedure limparDados;
@@ -50,6 +52,7 @@ begin
   result.setTamanho(Tamanho);
   result.setNumeroVariacao(numeroVariacao);
   result.setCodRoupa(CodRoupa);
+  //result.setRoupa(Roupa);
 end;
 
 constructor VariacaoRoupa.crieObj;
@@ -57,6 +60,7 @@ begin
   inherited;
   Cor := Cores.crieObj;
   Tamanho := Tamanhos.crieObj;
+  //Roupa := Roupas.CrieObj;
   limparDados;
 end;
 
@@ -64,6 +68,7 @@ destructor VariacaoRoupa.destrua_se;
 begin
   Cor.destrua_se;
   tamanho.destrua_se;
+  //Roupa.destrua_se;
 end;
 
 
@@ -92,6 +97,11 @@ begin
   result := tamanho;
 end;
 
+//function VariacaoRoupa.getRoupa: Roupas;
+//begin
+//  result := Roupa.clone;
+//end;
+
 procedure VariacaoRoupa.limparDados;
 begin
   inherited;
@@ -100,6 +110,7 @@ begin
   tamanho.limpardados;
   numeroVariacao := 0;
   CodRoupa := 0;
+  //roupa.limparDados;
 end;
 
 procedure VariacaoRoupa.setCodigoVariacao(pCodigoVariacao: string);
@@ -121,6 +132,11 @@ procedure VariacaoRoupa.setNumeroVariacao(pNumeroVariacao: integer);
 begin
   numeroVariacao := pNumeroVariacao;
 end;
+
+//procedure VariacaoRoupa.setRoupa(pRoupa: Roupas);
+//begin
+//
+//end;
 
 procedure VariacaoRoupa.setTamanho(pTamanho: Tamanhos);
 begin

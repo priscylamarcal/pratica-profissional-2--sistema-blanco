@@ -1,15 +1,12 @@
 unit uInter;
-
 interface
-
 uses uConsulta_Paises, uConsulta_Estados, uConsulta_Cargos, uConsulta_Clientes,
      uConsulta_Colecoes, uConsulta_CondicoesPagamentos, uConsulta_ContasPagar,
      uConsulta_ContasReceber, uConsulta_Cores, uConsulta_Departamentos,
      uConsulta_FormasPagamentos, uConsulta_Fornecedores, uConsulta_Funcionarios,
      uConsulta_GruposProdutos, uConsulta_Marcas, uConsulta_Roupas, uConsulta_Tamanhos,
      uConsulta_TiposContatos, uConsulta_Vendas, uConsulta_Estoques, uConsulta_Cidades,
-     uConsulta_Compras,
-
+     uConsulta_Compras, uConsulta_Variacoes_Roupas,
      uCadastroPaises, uCadastroEstados, uCadastroFuncionarios,
      uCadastroCargos, uCadastroDepartamentos, uCadastroFormasPagamentos,
      uCadastroCondicoesPagamentos, uCadastroVendas, uCadastroContasReceber,
@@ -18,16 +15,13 @@ uses uConsulta_Paises, uConsulta_Estados, uConsulta_Cargos, uConsulta_Clientes,
      uCadastroProdutos, uCadastroFornecedores, uCadastroClientes, uCadastroTiposContatos,
      uCadastro_Cidades, uCadastro_Compras,
 
-
      uPaises, uEstados, uCores, uColecoes, uGruposRoupas, uMarcas,
      uTamanhos, uFormaPagamento, uTiposContatos, uCidades, uCargos, uFornecedores,
      uClientes, uRoupas, uCondicoesPagamentos, uFuncionarios,
-
      uCtrlPaises, uCtrlEstados, uDepartamentos, uCtrlCores, uCtrlColecoes,
      uCtrlGruposRoupas, uCtrlMarcas, uCtrlTamanhos, uCtrlFormasPagamentos,
      uCtrlTiposContatos, uCtrlCidades,uCtrlCargos, uCtrlCondicoesPagamentos,
      uCtrlFornecedores, uCtrlFuncionarios, uCtrlClientes, uCtrlRoupas;
-
 type Inter = class
   private
   protected
@@ -53,7 +47,7 @@ type Inter = class
     aConsultaFuncionarios        : Tform_consulta_funcionarios;
     aConsultaCidades             : Tform_consulta_cidades;
     aConsultaCompras             : Tform_consulta_compras;
-
+    aConsultaVariacoesRoupas     : TForm_Consulta_variacoes_roupas;
     oCadastroPaises             : Tform_cadastro_paises;
     oCadastroEstados            : Tform_cadastro_estados;
     oCadastroFuncionarios       : Tform_cadastro_funcionario;
@@ -78,7 +72,6 @@ type Inter = class
   public
     constructor crieObj;
     destructor destrua_se;
-
     procedure PDPaises ( pCtrl : TObject; pObj : Paises );
     procedure PDEstados ( pCtrl : TObject; pObj : Estados );
     procedure PDCargos ( pCtrl : TObject; pObj : Cargos);
@@ -101,12 +94,10 @@ type Inter = class
     procedure PDEstoques ( pCtrl : TObject; pObj : TObject );
     procedure PDCidades ( pCtrl : TObject; pObj : Cidades );
     procedure PDCompras ( pCtrl : TObject; pObj : TObject );
+    procedure PDVariacoesRoupas (pCtrl: TOBject; pObj: TObject );
 end;
-
 implementation
-
 { inter }
-
 constructor Inter.crieObj;
 begin
   aConsultaPaises              := Tform_consulta_paises.Create(nil);
@@ -131,7 +122,7 @@ begin
   aConsultaFuncionarios        := Tform_consulta_funcionarios.Create(nil);
   aConsultaCidades             := Tform_consulta_cidades.Create(nil);
   aConsultaCompras             := Tform_consulta_compras.Create(nil);
-
+  aConsultaVariacoesRoupas     := Tform_consulta_variacoes_roupas.Create(nil);
   oCadastroPaises               := Tform_cadastro_paises.Create(nil);
   oCadastroEstados              := Tform_cadastro_estados.Create(nil);
   oCadastroFuncionarios         := Tform_cadastro_funcionario.Create(nil);
@@ -153,7 +144,6 @@ begin
   oCadastroCondicaoPagamento    := Tform_cadastro_condicao_pagamento.Create(nil);
   oCadastroCidade               := Tform_cadastro_cidades.Create(nil);
   oCadastroCompras              := Tform_cadastro_compras.Create(nil);
-
   aConsultaPaises.setFrmCadastro( oCadastroPaises );
   aConsultaEstados.setFrmCadastro( oCadastroEstados );
   aConsultaFuncionarios.setFrmCadastro( oCadastroFuncionarios );
@@ -175,36 +165,31 @@ begin
   aConsultaCondicoesPagamentos.setFrmCadastro( oCadastroCondicaoPagamento );
   aConsultaCidades.setFrmCadastro( oCadastroCidade );
   aConsultaCompras.setFrmCadastro(oCadastroCompras);
-
   oCadastroEstados.setFrmConsultaPaises( aConsultaPaises );
-
   oCadastroCidade.setFrmConsultaEstados( aConsultaEstados );
-
   oCadastroCargos.setFrmConsultaDepartamentos( aConsultaDepartamentos );
-
   oCadastroCondicaoPagamento.setFrmConsultaFormas( aConsultaFormasPagamentos );
-
   oCadastroFornecedores.setFrmConsultaCidade( aConsultaCidades );
   oCadastroFornecedores.setFrmConsultaContatos( aConsultaTiposContatos );
   oCadastroFornecedores.setFrmConsultaCondicaoPagamento( aConsultaCondicoesPagamentos );
-
   oCadastroFuncionarios.setFrmConsultaCidades( aConsultaCidades );
   oCadastroFuncionarios.setFrmConsultaContatos( aConsultaTiposContatos );
   oCadastroFuncionarios.setFrmConsultaCargos( aConsultaCargos );
-
   oCadastroClientes.setFrmConsultaCidade( aConsultaCidades );
   oCadastroClientes.setFrmConsultaContatos( aConsultaTiposContatos );
   oCadastroClientes.setFrmConsultaFuncionarios( aConsultaFuncionarios );
   oCadastroClientes.setFrmConsultaCondicaoPagamento( aConsultaCondicoesPagamentos );
-
   oCadastroProdutos.setFrmConsultaGruposProdutos( aConsultaGruposRoupas );
   oCadastroProdutos.setFrmConsultaMarcas( aConsultaMarcas );
   oCadastroProdutos.setFrmConsultaCores( aConsultaCores );
   oCadastroProdutos.setFrmConsultaTamanhos( aConsultaTamanhos );
   oCadastroProdutos.setFrmConsultaFornecedores( aConsultaFornecedores );
   oCadastroProdutos.setFrmConsultaColecoes( aConsultaColecoes );
+  oCadastroCompras.setFrmConsultaFornecedores( aConsultaFornecedores);
+  oCadastroCompras.setFrmConsultaCondicaoPagamento( aConsultaCondicoesPagamentos);
+  oCadastroCompras.setFrmConsultaVariacoesRoupas( aConsultaVariacoesRoupas);
+  oCadastroCompras.setFrmConsultaRoupas( aConsultaRoupas);
 end;
-
 destructor Inter.destrua_se;
 begin
   aConsultaPaises.FreeInstance;
@@ -229,7 +214,6 @@ begin
   aConsultaFuncionarios.FreeInstance;
   aConsultaCidades.FreeInstance;
   aConsultaCompras.FreeInstance;
-
   oCadastroPaises.FreeInstance;
   oCadastroEstados.FreeInstance;
   oCadastroFuncionarios.FreeInstance;
@@ -252,132 +236,116 @@ begin
   oCadastroCidade.FreeInstance;
   oCadastroCompras.FreeInstance;
 end;
-
 procedure Inter.PDCargos(pCtrl: TObject; pObj: Cargos);
 begin
   aConsultaCargos.conhecaObj( pCtrl, pObj );
   aConsultaCargos.ShowModal;
 end;
-
 procedure Inter.PDCidades(pCtrl: TObject; pObj: Cidades);
 begin
   aConsultaCidades.conhecaObj( pCtrl, pObj );
   aConsultaCidades.ShowModal;
 end;
-
 procedure Inter.PDClientes(pCtrl : TObject; pObj : Clientes);
 begin
   aConsultaClientes.conhecaObj( pCtrl, pObj );
   aConsultaClientes.ShowModal;
 end;
-
 procedure Inter.PDColecoes(pCtrl: TObject; pObj: Colecoes);
 begin
   aConsultaColecoes.conhecaObj( pCtrl, pObj );
   aConsultaColecoes.ShowModal;
 end;
-
 procedure Inter.PDCompras(pCtrl, pObj: TObject);
 begin
+  aConsultaCompras.conhecaObj( pCtrl, pObj);
   aConsultaCompras.ShowModal;
 end;
-
 procedure Inter.PDCondicoesPagamentos(pCtrl : TObject; pObj : CondicoesPagamentos);
 begin
   aConsultaCondicoesPagamentos.conhecaObj( pCtrl, pObj );
   aConsultaCondicoesPagamentos.ShowModal;
 end;
-
 procedure Inter.PDContasPagar(pCtrl, pObj: TObject);
 begin
   aConsultaContasPagar.ShowModal;
 end;
-
 procedure Inter.PDContasReceber(pCtrl, pObj: TObject);
 begin
   aConsultaContasReceber.ShowModal;
 end;
-
 procedure Inter.PDCores(pCtrl: TObject; pObj: Cores);
 begin
   aConsultaCores.conhecaObj( pCtrl, pObj );
   aConsultaCores.ShowModal;
 end;
-
 procedure Inter.PDDepartamentos(pCtrl : TObject; pObj: Departamentos);
 begin
   aConsultaDepartamentos.conhecaObj( pCtrl, pObj );
   aConsultaDepartamentos.ShowModal;
 end;
-
 procedure Inter.PDEstados ( pCtrl : TObject; pObj : Estados );
 begin
   aConsultaEstados.conhecaObj( pCtrl, pObj );
   aConsultaEstados.ShowModal;
 end;
-
 procedure Inter.PDEstoques(pCtrl, pObj: TObject);
 begin
   aConsultaEstoques.ShowModal;
 end;
-
 procedure Inter.PDFormasPagamentos(pCtrl : TObject; pObj : FormasPagamentos);
 begin
   aConsultaFormasPagamentos.conhecaObj( pCtrl, pObj );
   aConsultaFormasPagamentos.ShowModal;
 end;
-
 procedure Inter.PDFornecedores(pCtrl : TObject; pObj : Fornecedores);
 begin
   aConsultaFornecedores.conhecaObj( pCtrl, pObj );
   aConsultaFornecedores.ShowModal;
 end;
-
 procedure Inter.PDFuncionarios(pCtrl : TObject; pObj : Funcionarios);
 begin
   aConsultaFuncionarios.conhecaObj( pCtrl, pObj );
   aConsultaFuncionarios.ShowModal;
 end;
-
 procedure Inter.PDGruposProdutos(pCtrl : TObject; pObj : GruposRoupas);
 begin
   aConsultaGruposRoupas.conhecaObj( pCtrl, pObj );
   aConsultaGruposRoupas.ShowModal;
 end;
-
 procedure Inter.PDMarcas(pCtrl: TObject; pObj : Marcas);
 begin
   aConsultaMarcas.conhecaObj( pCtrl, pObj );
   aConsultaMarcas.ShowModal;
 end;
-
 procedure Inter.PDPaises(pCtrl: TObject; pObj: Paises);
 begin
   aConsultaPaises.conhecaObj( pCtrl, pObj );
   aConsultaPaises.ShowModal;
 end;
-
 procedure Inter.PDRoupas(pCtrl : TObject; pObj : Roupas);
 begin
   aConsultaRoupas.conhecaObj( pCtrl, pObj );
   aConsultaRoupas.ShowModal;
 end;
-
 procedure Inter.PDTamanhos(pCtrl : TObject; pObj : Tamanhos);
 begin
   aConsultaTamanhos.conhecaObj( pCtrl, pObj );
   aConsultaTamanhos.ShowModal;
 end;
-
 procedure Inter.PDTiposContatos(pCtrl : TObject; pObj : TiposContatos);
 begin
   aConsultaTiposContatos.conhecaObj( pCtrl, pObj );
   aConsultaTiposContatos.ShowModal;
+end;
+procedure Inter.PDVariacoesRoupas(pCtrl, pObj: TObject);
+begin
+  aConsultaVariacoesRoupas.conhecaObj( pCtrl, pObj);
+  aConsultaVariacoesRoupas.ShowModal;
 end;
 
 procedure Inter.PDVendas(pCtrl, pObj: TObject);
 begin
   aConsultaVendas.ShowModal;
 end;
-
 end.

@@ -3,7 +3,7 @@ unit uCompras;
 interface
 
 uses Classes, SysUtils, System.Generics.Collections,
-  uPai, uFornecedores, uRoupas, uCondicoesPagamentos;
+  uPai, uFornecedores, uRoupas, uCondicoesPagamentos, uVariacoesRoupas, uProdutoCompras, uParcelasCompras;
 
 type
   Compras = class(Pai)
@@ -16,11 +16,13 @@ type
     data_emissao: TDateTime;
     data_chegada: TDateTime;
     umFornecedor: Fornecedores;
-    listaRoupas: TObjectList<Roupas>;
-    qtdRoupas: integer;
-    valor_unitario: currency;
-    desconto: currency;
-    valor_total: currency;
+    listaProdutos: TObjectList<ProdutoCompra>;
+    listaParcelas: TObjectList<ParcelaCompra>;
+    //listaRoupas: TObjectList<Roupas>;
+    //qtdRoupas: integer;
+    //valor_unitario: currency;
+    //desconto: currency;
+    //valor_total: currency;
 
     // total referente ao que está adicionado a tabela de roupas
     qtdTotalRoupa: integer;
@@ -31,7 +33,10 @@ type
     seguro: currency;
     outras_despesas: currency;
     umaCondicaoPagamento: CondicoesPagamentos;
+    //parcelas condicao pagamento
     observacao: string[250];
+
+    aVariacaoRoupa: VariacaoRoupa;
 
   public
     constructor crieObj;
@@ -43,11 +48,11 @@ type
     procedure setDataEmissao(pDataEmissao: TDateTime);
     procedure setDataChegada(pDataChegada: TDateTime);
     procedure setUmFornecedor(pFornecedor: Fornecedores);
-    procedure setListaRoupas(pListaRoupas: TObjectList<Roupas>);
-    procedure setQtdRoupas(pQtdRoupas: integer);
-    procedure setValorUnitario(pValorUnitario: currency);
-    procedure setDesconto(pDesconto: currency);
-    procedure setValorTotal(pValorTotal: currency);
+    //procedure setListaRoupas(pListaRoupas: TObjectList<Roupas>);
+    //procedure setQtdRoupas(pQtdRoupas: integer);
+    //procedure setValorUnitario(pValorUnitario: currency);
+    //procedure setDesconto(pDesconto: currency);
+    //procedure setValorTotal(pValorTotal: currency);
     procedure setQtdTotalRoupa(pQtdTotalRoupa: integer);
     procedure setQtdTotalDesconto(pQtdTotalDesconto: currency);
     procedure setTotalValor(pTotalValor: currency);
@@ -57,6 +62,9 @@ type
     procedure setUmaCondicaoPagamento(pUmaCondicaoPagamento
       : CondicoesPagamentos);
     procedure setObservacao(pObservacao: string);
+    procedure setaVariacaoRoupa(pVariacaoRoupa: VariacaoRoupa);
+    procedure setlistaProdutos(pListaProdutos: TObjectList<ProdutoCompra>);
+    procedure setlistaParcelas(pListaParcelas: TObjectList<ParcelaCompra>);
 
     function getModelo: string;
     function getSerie: string;
@@ -64,11 +72,11 @@ type
     function getDataEmissao: TDateTime;
     function getDataChegada: TDateTime;
     function getUmFornecedor: Fornecedores;
-    function getListaRoupas: TObjectList<Roupas>;
-    function getQtdRoupas: integer;
-    function getValorUnitario: currency;
-    function getDesconto: currency;
-    function getValorTotal: currency;
+    //function getListaRoupas: TObjectList<Roupas>;
+    //function getQtdRoupas: integer;
+    //function getValorUnitario: currency;
+    //function getDesconto: currency;
+    //function getValorTotal: currency;
     function getQtdTotalRoupa: integer;
     function getQtdTotalDesconto: currency;
     function getTotalValor: currency;
@@ -77,6 +85,9 @@ type
     function getOutrasDespesas: currency;
     function getUmaCondicaoPagamento: CondicoesPagamentos;
     function getObservacao: string;
+    function getaVariacaoRoupa: VariacaoRoupa;
+    function getlistaProdutos: TObjectList<ProdutoCompra>;
+    function getlistaParcelas: TObjectList<ParcelaCompra>;
     function clone: Compras;
 
   end;
@@ -94,11 +105,11 @@ begin
   data_emissao := 0;
   data_chegada := 0;
   umFornecedor := Fornecedores.crieObj;
-  listaRoupas := TObjectList<Roupas>.Create;
-  qtdRoupas := 0;
-  valor_unitario := 0;
-  desconto := 0;
-  valor_total := 0;
+  //listaRoupas := TObjectList<Roupas>.Create;
+  //qtdRoupas := 0;
+  //valor_unitario := 0;
+  //desconto := 0;
+  //valor_total := 0;
   qtdTotalRoupa := 0;
   qtdTotalDesconto := 0;
   totalValor := 0;
@@ -107,13 +118,24 @@ begin
   outras_despesas := 0;
   umaCondicaoPagamento := CondicoesPagamentos.crieObj;
   observacao := '';
+  aVariacaoRoupa := VariacaoRoupa.crieObj;
+  listaProdutos := TobjectList<ProdutoCompra>.create;
+  listaParcelas := TObjectlist<ParcelaCompra>.Create;
 end;
 
 destructor Compras.destrua_se;
 begin
   umFornecedor.destrua_se;
-  listaRoupas.Destroy;
+  //listaRoupas.Destroy;
   umaCondicaoPagamento.destrua_se;
+  aVariacaoRoupa.destrua_se;
+  listaProdutos.Destroy;
+  listaParcelas.Destroy;
+end;
+
+function Compras.getaVariacaoRoupa: VariacaoRoupa;
+begin
+  result := aVariacaoRoupa;
 end;
 
 function Compras.getDataChegada: TDateTime;
@@ -126,20 +148,30 @@ begin
   Result := data_emissao;
 end;
 
-function Compras.getDesconto: currency;
-begin
-  Result := desconto;
-end;
+//function Compras.getDesconto: currency;
+//begin
+//  Result := desconto;
+//end;
 
 function Compras.getFrete: currency;
 begin
   Result := frete;
 end;
 
-function Compras.getListaRoupas: TObjectList<Roupas>;
+function Compras.getlistaParcelas: TObjectList<ParcelaCompra>;
 begin
-  Result := listaRoupas;
+  result := ListaParcelas;
 end;
+
+function Compras.getlistaProdutos: TObjectList<ProdutoCompra>;
+begin
+  result := ListaProdutos;
+end;
+
+//function Compras.getListaRoupas: TObjectList<Roupas>;
+//begin
+//  Result := listaRoupas;
+//end;
 
 function Compras.getModelo: string;
 begin
@@ -161,10 +193,10 @@ begin
   Result := outras_despesas;
 end;
 
-function Compras.getQtdRoupas: integer;
-begin
-  Result := qtdRoupas;
-end;
+//function Compras.getQtdRoupas: integer;
+//begin
+//  Result := qtdRoupas;
+//end;
 
 function Compras.getQtdTotalDesconto: currency;
 begin
@@ -201,14 +233,19 @@ begin
   Result := umFornecedor;
 end;
 
-function Compras.getValorTotal: currency;
-begin
-  Result := valor_total;
-end;
+//function Compras.getValorTotal: currency;
+//begin
+//  Result := valor_total;
+//end;
 
-function Compras.getValorUnitario: currency;
+//function Compras.getValorUnitario: currency;
+//begin
+//  Result := valor_unitario;
+//end;
+
+procedure Compras.setaVariacaoRoupa(pVariacaoRoupa: VariacaoRoupa);
 begin
-  Result := valor_unitario;
+  aVariacaoRoupa := pVariacaoRoupa;
 end;
 
 procedure Compras.setDataChegada(pDataChegada: TDateTime);
@@ -221,20 +258,30 @@ begin
   data_emissao := pDataEmissao;
 end;
 
-procedure Compras.setDesconto(pDesconto: currency);
-begin
-  desconto := pDesconto;
-end;
+//procedure Compras.setDesconto(pDesconto: currency);
+//begin
+//  desconto := pDesconto;
+//end;
 
 procedure Compras.setFrete(pFrete: currency);
 begin
   frete := pFrete;
 end;
 
-procedure Compras.setListaRoupas(pListaRoupas: TObjectList<Roupas>);
+procedure Compras.setlistaParcelas(pListaParcelas: TObjectList<ParcelaCompra>);
 begin
-  listaRoupas := pListaRoupas;
+  listaParcelas := pListaParcelas;
 end;
+
+procedure Compras.setlistaProdutos(pListaProdutos: TObjectList<ProdutoCompra>);
+begin
+   listaProdutos := pListaProdutos;
+end;
+
+//procedure Compras.setListaRoupas(pListaRoupas: TObjectList<Roupas>);
+//begin
+//  listaRoupas := pListaRoupas;
+//end;
 
 procedure Compras.setModelo(pModelo: string);
 begin
@@ -256,10 +303,10 @@ begin
   outras_despesas := pOutrasDespesas;
 end;
 
-procedure Compras.setQtdRoupas(pQtdRoupas: integer);
-begin
-  qtdRoupas := pQtdRoupas;
-end;
+//procedure Compras.setQtdRoupas(pQtdRoupas: integer);
+//begin
+//  qtdRoupas := pQtdRoupas;
+//end;
 
 procedure Compras.setQtdTotalDesconto(pQtdTotalDesconto: currency);
 begin
@@ -297,15 +344,15 @@ begin
   umFornecedor := pFornecedor;
 end;
 
-procedure Compras.setValorTotal(pValorTotal: currency);
-begin
-  valor_total := pValorTotal;
-end;
+//procedure Compras.setValorTotal(pValorTotal: currency);
+//begin
+//  valor_total := pValorTotal;
+//end;
 
-procedure Compras.setValorUnitario(pValorUnitario: currency);
-begin
-  valor_unitario := pValorUnitario;
-end;
+//procedure Compras.setValorUnitario(pValorUnitario: currency);
+//begin
+//  //valor_unitario := pValorUnitario;
+//end;
 
 function Compras.clone: Compras;
 var
@@ -318,10 +365,10 @@ begin
   Result.setDataEmissao(data_emissao);
   Result.setDataChegada(data_chegada);
   Result.setUmFornecedor(umFornecedor.clone);
-  Result.setQtdRoupas(qtdRoupas);
-  Result.setValorUnitario(valor_unitario);
-  Result.setDesconto(desconto);
-  Result.setValorTotal(valor_total);
+  //Result.setQtdRoupas(qtdRoupas);
+  //Result.setValorUnitario(valor_unitario);
+//  Result.setDesconto(desconto);
+//  Result.setValorTotal(valor_total);
   Result.setQtdTotalRoupa(qtdTotalRoupa);
   Result.setQtdTotalDesconto(qtdTotalDesconto);
   Result.setTotalValor(totalValor);
@@ -333,13 +380,15 @@ begin
   Result.setDataCad(dataCad);
   Result.setUltAlt(ultAlt);
   Result.setCodUsu(codUsu);
+  result.setlistaProdutos(listaProdutos);
+  result.setListaParcelas(listaParcelas);
 
-  if Assigned(listaRoupas) then
-    if listaRoupas.Count > 0 then
-    begin
-      for aRoupa in listaRoupas do
-        Result.getListaRoupas.Add(aRoupa.clone);
-    end;
+//  if Assigned(listaRoupas) then
+//    if listaRoupas.Count > 0 then
+//    begin
+//      for aRoupa in listaRoupas do
+//        Result.getListaRoupas.Add(aRoupa.clone);
+//    end;
 end;
 
 end.

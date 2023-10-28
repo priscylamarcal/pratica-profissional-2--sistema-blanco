@@ -1,0 +1,27 @@
+inherited form_consulta_pai2: Tform_consulta_pai2
+  Caption = 'form_consulta_pai2'
+  ExplicitWidth = 1316
+  ExplicitHeight = 625
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    ExplicitWidth = 1300
+    ExplicitHeight = 586
+    inherited pnl_topo: TPanel
+      ExplicitWidth = 1300
+      inherited pnl_dentro_topo: TPanel
+        Width = 1296
+        ExplicitWidth = 1292
+      end
+    end
+    inherited pnl_db_grid: TPanel
+      inherited ScrollBox1: TScrollBox
+        Width = 1304
+        Height = 430
+        inherited DBGrid: TDBGrid
+          Width = 1304
+          Height = 430
+        end
+      end
+    end
+  end
+end

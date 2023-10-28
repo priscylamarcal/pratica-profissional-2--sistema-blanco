@@ -43,6 +43,7 @@ type
     function getCtrlFornecedores: ctrlFornecedores;
     function getCtrlColecoes: ctrlColecoes;
     function getCtrlVariacoesRoupas: CtrlVariacoesRoupas;
+    function recuperar(var pRoupa: Roupas) : boolean;
   end;
 
 implementation
@@ -149,6 +150,11 @@ end;
 function ctrlRoupas.pesquisar(AFilter: TFilterSearch; pChave: string): string;
 begin
   result := aDaoRoupas.pesquisar(AFilter, pChave);
+end;
+
+function ctrlRoupas.recuperar(var pRoupa: Roupas): boolean;
+begin
+  result := aDaoRoupas.recuperar(pRoupa);
 end;
 
 function ctrlRoupas.salvar(pObj: TObject): string;

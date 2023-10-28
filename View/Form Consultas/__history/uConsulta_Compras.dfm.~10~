@@ -1,0 +1,30 @@
+inherited form_consulta_compras: Tform_consulta_compras
+  Caption = 'Consulta de Compras'
+  ClientHeight = 588
+  ExplicitWidth = 1316
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    Height = 588
+    inherited pnl_topo: TPanel
+      inherited pnl_dentro_topo: TPanel
+        Width = 1284
+        ExplicitWidth = 1280
+        inherited combobox_tipo_filtro: TComboBox1
+          ItemIndex = 0
+          Items.Strings = (
+            'TODOS')
+        end
+      end
+    end
+    inherited pnl_bottom: TPanel
+      Top = 520
+      ExplicitTop = 518
+      ExplicitWidth = 1300
+    end
+    inherited pnl_db_grid: TPanel
+      Height = 431
+      ExplicitWidth = 1300
+      ExplicitHeight = 429
+    end
+  end
+end

@@ -15,13 +15,16 @@ type
   public
     constructor crieObj; override;
     function getDS: TObject; override;
+    function getDSView: TObject;
     function pesquisar(AFilter: TFilterSearch; pChave: string): string;
       override;
+    function pesquisarView(AFilter: TFilterSearch; pChave: string): string;
     function salvar(pObj: TObject): string; override;
     function excluir(pObj: TObject): string; override;
     function carregar(pObj: TObject): string; override;
     function salvarLista(lista: TObjectList<VariacaoRoupa>): string;
     function carregarLista(lista: TObjectList<VariacaoRoupa>): string;
+    function recuperar(var pvariacaoRoupa: VariacaoRoupa) : boolean;
 
     function RetornaListaVariacoesRoupas(const ACodRoupa: Integer) : TObjectList<VariacaoRoupa>;
     function DeleteListaVariacoesRoupas(const ACodRoupa: Integer): Boolean;
@@ -170,6 +173,11 @@ begin
   Result := aDM.DSVariacoesRoupas;
 end;
 
+function daoVariacaoRoupa.getDSView: TObject;
+begin
+  Result := aDM.DSVariacoesProdutos;
+end;
+
 function daoVariacaoRoupa.pesquisar(AFilter: TFilterSearch; pChave: string): string;
 var
   msql: string;
@@ -199,6 +207,69 @@ begin
   aDM.QVariacoesRoupas.SQL.Text := msql;
   aDM.QVariacoesRoupas.Open;
   Result := '';
+end;
+
+function daoVariacaoRoupa.pesquisarView(AFilter: TFilterSearch;
+  pChave: string): string;
+begin
+  aDM.QVariacoesProdutos.Active   := False;
+  aDM.QVariacoesProdutos.Open;
+  Result := '';
+end;
+
+function daoVariacaoRoupa.recuperar(var pvariacaoRoupa: VariacaoRoupa): boolean;
+var
+  AQuery  : TFDQuery;
+begin
+  Result := false;
+  AQuery := TFDQuery.Create(nil);
+  try
+    AQuery.Connection  := adm.Conexao;
+    AQuery.Transaction := aDM.Transacao;
+
+    if (AQuery.Active) then
+     AQuery.Close;
+    AQuery.SQL.Clear;
+
+    AQuery.SQL.Add('SELECT * FROM VARIACOES_ROUPAS');
+    AQuery.SQL.Add('WHERE COD_ROUPA = :COD_ROUPA AND ');
+    AQuery.SQL.Add('NUMERO_VARIACAO = :NUMERO_VARIACAO ');
+    AQuery.ParamByName('COD_ROUPA').AsInteger := pvariacaoRoupa.getacodRoupa;
+    AQuery.ParamByName('NUMERO_VARIACAO').AsInteger := pvariacaoRoupa.getaNumeroVariacao;
+
+    AQuery.Open;
+
+    AQuery.First;
+
+    while not(AQuery.Eof) do
+    begin
+
+      with pvariacaoRoupa, AQuery do
+      begin
+        setCodigoVariacao(FieldByName('CODIGO').AsString);
+        setNumeroVariacao(FieldByName('NUMERO_Variacao').AsInteger);
+
+        getaTamanho.setCodigo(FieldByName('COD_TAMANHO').AsInteger);
+        SetCodRoupa(FieldByName('COD_ROUPA').AsInteger);
+
+        getaCor.setCodigo(FieldByName('cod_cor').AsInteger);
+        if aDM.QCores.Locate('CODCOR', getaCor.getCodigo, []) then
+         getaCor.setCor(aDM.QCores.FieldByName('COR').AsString);
+
+        getaTamanho.setCodigo(FieldByName('COD_TAMANHO').Value);
+        if aDM.QTamanhos.Locate('CODSIGLA', getaTamanho.getCodigo, []) then
+         getaTamanho.setSiglaTamanho(aDM.QTamanhos.FieldByName('SIGLA').AsString);
+      end;
+
+      Result := True;
+      AQuery.Next;
+    end;
+
+    AQuery.Close;
+  finally
+    FreeAndNil(AQuery);
+  end;
+
 end;
 
 function daoVariacaoRoupa.salvar(pObj: TObject): string;

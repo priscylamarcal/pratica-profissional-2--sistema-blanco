@@ -15,6 +15,8 @@ type daoRoupas = class( DAO )
     function salvar (  pObj : TObject ) : string;      override;
     function excluir ( pObj : TObject ) : string;     override;
     function carregar ( pObj : TObject ) : string;    override;
+    function recuperar(var pRoupa: Roupas) : boolean;
+
 end;
 implementation
 uses
@@ -101,6 +103,67 @@ begin
     aDM.QRoupas.Open;
     result:= '';
 end;
+function daoRoupas.recuperar(var pRoupa: Roupas): boolean;
+var
+  AQuery  : TFDQuery;
+begin
+  Result := false;
+  AQuery := TFDQuery.Create(nil);
+  try
+    AQuery.Connection  := adm.Conexao;
+    AQuery.Transaction := aDM.Transacao;
+
+    if (AQuery.Active) then
+     AQuery.Close;
+    AQuery.SQL.Clear;
+
+    AQuery.SQL.Add('SELECT * FROM ROUPAS');
+    AQuery.SQL.Add('WHERE COD_ROUPA = :COD_ROUPA ');
+    AQuery.ParamByName('COD_ROUPA').AsInteger := pRoupa.getCodigo;
+
+    AQuery.Open;
+
+    AQuery.First;
+
+    while not(AQuery.Eof) do
+    begin
+
+      with pRoupa, AQuery do
+      begin
+        setCodigo( aDM.QRoupas.FieldByName('COD_ROUPA').Value );
+        setDescricao( aDM.QRoupas.FieldByName('DESCRICAO_ROUPA').AsString );
+        setCodBarra( aDM.QRoupas.FieldByName('COD_BARRA').AsString );
+        setReferencia( aDM.QRoupas.FieldByName('REFERENCIA').AsString );
+        setCustoUnitario( aDM.QRoupas.FieldByName('VALOR_CUSTO').AsFloat );
+        setLucro( aDM.QRoupas.FieldByName('LUCRO').AsFloat );
+        setValorVenda( aDM.QRoupas.FieldByName('VALOR_VENDA').AsFloat );
+        setObs( aDM.QRoupas.FieldByName('OBS').AsString );
+        setDataCad( aDM.QRoupas.FieldByName('DATACAD').AsDateTime );
+        setUltAlt( aDM.QRoupas.FieldByName('ULTALT').AsDateTime );
+        setCodUsu( aDM.QRoupas.FieldByName('CODUSU').Value );
+        getoGrupoRoupa.setCodigo( aDM.QRoupas.FieldByName('CODGRUPOROUPA').Value );
+        getoGrupoRoupa.setGrupoRoupa( aDM.QRoupas.FieldByName('GRUPO_ROUPA').AsString );
+        getaMarca.setCodigo( aDM.QRoupas.FieldByName('CODMARCA').Value );
+        getaMarca.setMarca( aDM.QRoupas.FieldByName('MARCA').AsString );
+        getaCor.setCodigo( aDM.QRoupas.FieldByName('CODCOR').Value );
+        getoTamanho.setCodigo( aDM.QRoupas.FieldByName('CODTAMANHO').Value );
+        getoFornecedor.setCodigo( aDM.QRoupas.FieldByName('CODFORNECEDOR').Value );
+        getoFornecedor.setNomeRazaoSocial( aDM.QRoupas.FieldByName('FORNECEDOR').AsString );
+        getaColecao.setCodigo( aDM.QRoupas.FieldByName('CODCOLECAO').Value );
+        getaColecao.setColecao( aDM.QRoupas.FieldByName('COLECAO').AsString );
+        setUnidadeMedida( aDM.QRoupas.FieldByName('UNIDADE_MEDIDA').Value );
+      end;
+
+      Result := True;
+      AQuery.Next;
+    end;
+
+    AQuery.Close;
+  finally
+    FreeAndNil(AQuery);
+  end;
+end;
+
 function daoRoupas.RetornaCodInserido: Integer;
 const
   SQL =//consulta que retorna qual a posição atual do generator da tabela

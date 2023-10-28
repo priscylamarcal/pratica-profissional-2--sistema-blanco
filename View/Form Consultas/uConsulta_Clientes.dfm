@@ -1,7 +1,6 @@
 inherited form_consulta_clientes: Tform_consulta_clientes
   Caption = 'Consulta de Clientes'
-  ExplicitLeft = -561
-  ExplicitTop = -225
+  ExplicitLeft = 2
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnl_fundo: TPanel

@@ -1,11 +1,12 @@
 object DM: TDM
-  OldCreateOrder = False
+  OldCreateOrder = True
   Height = 456
   Width = 709
   object Conexao: TFDConnection
     Params.Strings = (
       
-        'Database= D:\Desenvolvimento\Projeto\pratica-profissional-2\bd\BD-SISTEMA-BLANCO.FDB'
+        'Database=D:\Desenvolvimento\Projeto\pratica-profissional-2\bd\BD' +
+        '-SISTEMA-BLANCO.FDB'
       'User_Name=SYSDBA'
       'Password=masterkey'
       'Server=localhost'
@@ -805,24 +806,6 @@ object DM: TDM
       Origin = 'CODCIDADE'
       Visible = False
     end
-    object QFornecedoresCODCONTATO: TIntegerField
-      DisplayLabel = 'C'#243'd Contato'
-      FieldName = 'CODCONTATO'
-      Origin = 'CODCONTATO'
-      Visible = False
-    end
-    object QFornecedoresCONTATO_AUX1: TStringField
-      FieldName = 'CONTATO_AUX1'
-      Origin = 'CONTATO_AUX1'
-      Visible = False
-      Size = 30
-    end
-    object QFornecedoresCONTATO_AUX2: TStringField
-      FieldName = 'CONTATO_AUX2'
-      Origin = 'CONTATO_AUX2'
-      Visible = False
-      Size = 30
-    end
     object QFornecedoresCNPJ_CPF: TStringField
       DisplayLabel = 'CNPJ/CPF'
       DisplayWidth = 30
@@ -860,16 +843,6 @@ object DM: TDM
       LookupKeyFields = 'CODCIDADE'
       LookupResultField = 'UF'
       KeyFields = 'CODCIDADE'
-      Visible = False
-      Lookup = True
-    end
-    object QFornecedoresCONTATO: TStringField
-      FieldKind = fkLookup
-      FieldName = 'CONTATO'
-      LookupDataSet = QTiposContatos
-      LookupKeyFields = 'CODTIPO'
-      LookupResultField = 'TIPOCONTATO'
-      KeyFields = 'CODCONTATO'
       Visible = False
       Lookup = True
     end
@@ -976,23 +949,6 @@ object DM: TDM
       FieldName = 'CODCIDADE'
       Origin = 'CODCIDADE'
       Visible = False
-    end
-    object QFuncionariosCODCONTATO: TIntegerField
-      FieldName = 'CODCONTATO'
-      Origin = 'CODCONTATO'
-      Visible = False
-    end
-    object QFuncionariosCONTATO_AUX1: TStringField
-      FieldName = 'CONTATO_AUX1'
-      Origin = 'CONTATO_AUX1'
-      Visible = False
-      Size = 50
-    end
-    object QFuncionariosCONTATO_AUX2: TStringField
-      FieldName = 'CONTATO_AUX2'
-      Origin = 'CONTATO_AUX2'
-      Visible = False
-      Size = 50
     end
     object QFuncionariosCPF: TStringField
       DisplayWidth = 20
@@ -1152,23 +1108,6 @@ object DM: TDM
       Origin = 'CODCIDADE'
       Required = True
       Visible = False
-    end
-    object QClientesCODCONTATO: TIntegerField
-      FieldName = 'CODCONTATO'
-      Origin = 'CODCONTATO'
-      Visible = False
-    end
-    object QClientesCONTATO_AUX1: TStringField
-      FieldName = 'CONTATO_AUX1'
-      Origin = 'CONTATO_AUX1'
-      Visible = False
-      Size = 50
-    end
-    object QClientesCONTATO_AUX2: TStringField
-      FieldName = 'CONTATO_AUX2'
-      Origin = 'CONTATO_AUX2'
-      Visible = False
-      Size = 50
     end
     object QClientesCODFUNC: TIntegerField
       FieldName = 'CODFUNC'
@@ -1443,6 +1382,7 @@ object DM: TDM
     Top = 328
   end
   object QContatos: TFDQuery
+    Active = True
     Connection = Conexao
     SQL.Strings = (
       'select * from contatos')
@@ -1486,5 +1426,341 @@ object DM: TDM
     DataSet = QContatos
     Left = 488
     Top = 328
+  end
+  object QCompras: TFDQuery
+    Connection = Conexao
+    SQL.Strings = (
+      'select * from compras')
+    Left = 552
+    Top = 328
+    object QComprasMODELO: TStringField
+      DisplayLabel = 'Modelo'
+      DisplayWidth = 30
+      FieldName = 'MODELO'
+      Origin = 'MODELO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QComprasSERIE: TStringField
+      DisplayLabel = 'S'#233'rie'
+      DisplayWidth = 30
+      FieldName = 'SERIE'
+      Origin = 'SERIE'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QComprasNUMERO: TStringField
+      DisplayLabel = 'N'#250'mero'
+      DisplayWidth = 30
+      FieldName = 'NUMERO'
+      Origin = 'NUMERO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QComprasCOD_FORNECEDOR: TIntegerField
+      FieldName = 'COD_FORNECEDOR'
+      Origin = 'COD_FORNECEDOR'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Visible = False
+    end
+    object QComprasCOD_CONDICAO: TIntegerField
+      FieldName = 'COD_CONDICAO'
+      Origin = 'COD_CONDICAO'
+      Required = True
+      Visible = False
+    end
+    object QComprasDATA_EMISSAO: TSQLTimeStampField
+      DisplayLabel = 'Data Emiss'#227'o'
+      DisplayWidth = 20
+      FieldName = 'DATA_EMISSAO'
+      Origin = 'DATA_EMISSAO'
+    end
+    object QComprasDATA_CHEGADA: TSQLTimeStampField
+      DisplayLabel = 'Data Chegada'
+      DisplayWidth = 20
+      FieldName = 'DATA_CHEGADA'
+      Origin = 'DATA_CHEGADA'
+      Visible = False
+    end
+    object QComprasQTD: TIntegerField
+      DisplayLabel = 'Quantidade'
+      FieldName = 'QTD'
+      Origin = 'QTD'
+      Visible = False
+    end
+    object QComprasDESCONTO: TSingleField
+      DisplayLabel = 'Desconto'
+      FieldName = 'DESCONTO'
+      Origin = 'DESCONTO'
+      Visible = False
+    end
+    object QComprasVALOR_TOTAL: TSingleField
+      DisplayLabel = 'Valor Total'
+      FieldName = 'VALOR_TOTAL'
+      Origin = 'VALOR_TOTAL'
+      Visible = False
+    end
+    object QComprasFRETE: TSingleField
+      DisplayLabel = 'Frete'
+      FieldName = 'FRETE'
+      Origin = 'FRETE'
+      Visible = False
+    end
+    object QComprasSEGURO: TSingleField
+      DisplayLabel = 'Seguro'
+      FieldName = 'SEGURO'
+      Origin = 'SEGURO'
+      Visible = False
+    end
+    object QComprasOUTRAS_DESPESAS: TSingleField
+      FieldName = 'OUTRAS_DESPESAS'
+      Origin = 'OUTRAS_DESPESAS'
+      Visible = False
+    end
+    object QComprasDATACAD: TSQLTimeStampField
+      FieldName = 'DATACAD'
+      Origin = 'DATACAD'
+      Visible = False
+    end
+    object QComprasULTALT: TSQLTimeStampField
+      FieldName = 'ULTALT'
+      Origin = 'ULTALT'
+      Visible = False
+    end
+    object QComprasCODUSU: TIntegerField
+      FieldName = 'CODUSU'
+      Origin = 'CODUSU'
+      Visible = False
+    end
+    object QComprasOBS: TStringField
+      FieldName = 'OBS'
+      Origin = 'OBS'
+      Visible = False
+      Size = 250
+    end
+    object QComprasNOMEFORNECEDOR: TStringField
+      DisplayLabel = 'Fornecedor'
+      DisplayWidth = 88
+      FieldKind = fkLookup
+      FieldName = 'NOMEFORNECEDOR'
+      LookupDataSet = QFornecedores
+      LookupKeyFields = 'CODFORN'
+      LookupResultField = 'NOME_RAZAO_SOCIAL'
+      KeyFields = 'COD_FORNECEDOR'
+      Lookup = True
+    end
+  end
+  object DSCompras: TDataSource
+    DataSet = QCompras
+    Left = 608
+    Top = 328
+  end
+  object QProdutosCompras: TFDQuery
+    Active = True
+    Connection = Conexao
+    SQL.Strings = (
+      'select * from PRODUTOS_COMPRAS')
+    Left = 24
+    Top = 400
+    object QProdutosComprasCOD_ROUPA: TIntegerField
+      FieldName = 'COD_ROUPA'
+      Origin = 'COD_ROUPA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QProdutosComprasNUMERO_VARIACAO: TIntegerField
+      FieldName = 'NUMERO_VARIACAO'
+      Origin = 'NUMERO_VARIACAO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QProdutosComprasQTD: TIntegerField
+      FieldName = 'QTD'
+      Origin = 'QTD'
+    end
+    object QProdutosComprasVALOR_UNITARIO: TSingleField
+      FieldName = 'VALOR_UNITARIO'
+      Origin = 'VALOR_UNITARIO'
+    end
+    object QProdutosComprasDESCONTO: TSingleField
+      FieldName = 'DESCONTO'
+      Origin = 'DESCONTO'
+    end
+    object QProdutosComprasVALOR_TOTAL: TSingleField
+      FieldName = 'VALOR_TOTAL'
+      Origin = 'VALOR_TOTAL'
+    end
+    object QProdutosComprasMODELO: TStringField
+      FieldName = 'MODELO'
+      Origin = 'MODELO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QProdutosComprasSERIE: TStringField
+      FieldName = 'SERIE'
+      Origin = 'SERIE'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QProdutosComprasNUMERO: TStringField
+      FieldName = 'NUMERO'
+      Origin = 'NUMERO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QProdutosComprasCOD_FORNECEDOR: TIntegerField
+      FieldName = 'COD_FORNECEDOR'
+      Origin = 'COD_FORNECEDOR'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QProdutosComprasNUMERO_PRODUTO: TIntegerField
+      FieldName = 'NUMERO_PRODUTO'
+      Origin = 'NUMERO_PRODUTO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+  end
+  object DsProdutosCompras: TDataSource
+    DataSet = QProdutosCompras
+    Left = 88
+    Top = 400
+  end
+  object QVariacoesProdutos: TFDQuery
+    Active = True
+    Connection = Conexao
+    SQL.Strings = (
+      
+        'select r.cod_roupa, v.numero_variacao, r.descricao_roupa, c.codc' +
+        'or, c.cor,t.codsigla, t.sigla, r.unidade_medida, v.codigo from v' +
+        'ariacoes_roupas v '
+      'left join roupas r on v.cod_roupa = r.cod_roupa'
+      'left join sigla_tamanhos t on t.codsigla = v.cod_tamanho'
+      'left join cores c on c.codcor = v.cod_cor')
+    Left = 168
+    Top = 400
+    object QVariacoesProdutosCOD_ROUPA: TIntegerField
+      DisplayLabel = 'C'#243'digo Roupa'
+      FieldName = 'COD_ROUPA'
+      Origin = 'COD_ROUPA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+    end
+    object QVariacoesProdutosDESCRICAO_ROUPA: TStringField
+      DisplayLabel = 'Descri'#231#227'o Roupa'
+      FieldName = 'DESCRICAO_ROUPA'
+      Origin = 'DESCRICAO_ROUPA'
+      Size = 68
+    end
+    object QVariacoesProdutosCOR: TStringField
+      DisplayLabel = 'Cor'
+      FieldName = 'COR'
+      Origin = 'COR'
+      Size = 40
+    end
+    object QVariacoesProdutosSIGLA: TStringField
+      DisplayLabel = 'Tamanho'
+      FieldName = 'SIGLA'
+      Origin = 'SIGLA'
+      Size = 3
+    end
+    object QVariacoesProdutosUNIDADE_MEDIDA: TStringField
+      DisplayLabel = 'Unidade de Medida'
+      FieldName = 'UNIDADE_MEDIDA'
+      Origin = 'UNIDADE_MEDIDA'
+      Size = 60
+    end
+    object QVariacoesProdutosCODIGO: TStringField
+      DisplayLabel = 'C'#243'digo Produto'
+      FieldName = 'CODIGO'
+      Origin = 'CODIGO'
+      Size = 10
+    end
+    object QVariacoesProdutosNUMERO_VARIACAO: TIntegerField
+      FieldName = 'NUMERO_VARIACAO'
+      Origin = 'NUMERO_VARIACAO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Visible = False
+    end
+    object QVariacoesProdutosCODCOR: TIntegerField
+      FieldName = 'CODCOR'
+      Origin = 'CODCOR'
+      Visible = False
+    end
+    object QVariacoesProdutosCODSIGLA: TIntegerField
+      FieldName = 'CODSIGLA'
+      Origin = 'CODSIGLA'
+      Visible = False
+    end
+  end
+  object DSVariacoesProdutos: TDataSource
+    DataSet = QVariacoesProdutos
+    Left = 232
+    Top = 400
+  end
+  object QParcelasCompras: TFDQuery
+    Connection = Conexao
+    SQL.Strings = (
+      'select * from parcelas_compras')
+    Left = 304
+    Top = 400
+    object QParcelasComprasNUMERO_PARCELA: TIntegerField
+      FieldName = 'NUMERO_PARCELA'
+      Origin = 'NUMERO_PARCELA'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+    object QParcelasComprasDATA_VENCIMENTO: TSQLTimeStampField
+      FieldName = 'DATA_VENCIMENTO'
+      Origin = 'DATA_VENCIMENTO'
+    end
+    object QParcelasComprasVALOR: TSingleField
+      FieldName = 'VALOR'
+      Origin = 'VALOR'
+    end
+    object QParcelasComprasCODCONDICAO: TIntegerField
+      FieldName = 'CODCONDICAO'
+      Origin = 'CODCONDICAO'
+      Required = True
+    end
+    object QParcelasComprasMODELO: TStringField
+      FieldName = 'MODELO'
+      Origin = 'MODELO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QParcelasComprasSERIE: TStringField
+      FieldName = 'SERIE'
+      Origin = 'SERIE'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QParcelasComprasNUMERO: TStringField
+      FieldName = 'NUMERO'
+      Origin = 'NUMERO'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 50
+    end
+    object QParcelasComprasCOD_FORNECEDOR: TIntegerField
+      FieldName = 'COD_FORNECEDOR'
+      Origin = 'COD_FORNECEDOR'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+    end
+  end
+  object DSParcelasCompras: TDataSource
+    DataSet = QParcelasCompras
+    Left = 360
+    Top = 400
   end
 end

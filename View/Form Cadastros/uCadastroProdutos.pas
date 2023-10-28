@@ -231,6 +231,7 @@ begin
 end;
 
 procedure Tform_cadastro_produtos.AlterarItem;
+var pos: integer;
 begin
    if cdsVariacoes.RecordCount > 0 then
    begin
@@ -241,11 +242,14 @@ begin
         edt_cod_tamanho.text := InttoStr(cdsVariacoesID_TAMANHO.AsInteger);
         edt_pesquisar_tamanho.text := cdsVariacoesTAMANHO.asString;
         edt_codigo_roupa.text := cdsVariacoesCODIGO.asString;
+
         alterar := false;
       end
       else
       begin
+        pos := cdsVariacoesnum_variacao.asInteger;
         ExcluirColuna(cdsVariacoes.FieldByName('tamanho').AsString);
+        cdsVariacoes.Locate('NUM_VARIACAO', pos, []);
         adicionarItens(true);
         alterar := true;
       end;
@@ -257,7 +261,7 @@ end;
 
 procedure Tform_cadastro_produtos.AtualizarContagem;
 begin
-  Self.edt_quant_total_produtos.Text := IntToStr(cdsVariacoes.RecordCount - 1);
+  Self.edt_quant_total_produtos.Text := IntToStr(cdsVariacoes.RecordCount);
 end;
 
 procedure Tform_cadastro_produtos.bloqueaiaBtnPesquisa;
@@ -326,7 +330,6 @@ procedure Tform_cadastro_produtos.btn_botao_excluir_variacaoClick(
   Sender: TObject);
 begin
   inherited;
-  ExcluirColuna(cdsVariacoes.FieldByName('tamanho').AsString);
   ExcluirItem;
   AtualizarContagem;
 end;
@@ -440,6 +443,7 @@ begin
   self.edt_data_ult_alt.Text:= DateToStr(aRoupa.getUltAlt);
   self.edt_unidade_medida.text  := aRoupa.getUnidadeMedida;
 
+  cdsVariacoes.EmptyDataSet;
   for Variacao in aRoupa.getListaVariacao do
   begin
     AdicionarColuna(Variacao.getaTamanho.getSiglaTamanho);
@@ -454,6 +458,8 @@ begin
   end;
   cdsVariacoes.First;
   cdsVariacoes.EnableControls;
+
+  Self.edt_quant_total_produtos.Text := IntToStr(cdsVariacoes.RecordCount);
 end;
 
 procedure Tform_cadastro_produtos.conhecaObj(pCtrl, pObj: TObject);
@@ -540,18 +546,24 @@ begin
    begin
       for I := 0 to GridVariacoes.Columns.Count - 1 do
       begin
-         col := GridVariacoes.Columns[I];
-         if col.Title.Caption = pColuna then
+         if GridVariacoes.Columns[I].Title.Caption = pColuna then
+         begin
             GridVariacoes.Columns[I].Free;
+            break;
+         end;
       end;
    end;
 end;
 
 procedure Tform_cadastro_produtos.ExcluirItem;
 var i: integer;
+    pos : integer;
 begin
   if cdsVariacoes.RecordCount > 0 then
   begin
+    pos := cdsVariacoesnum_variacao.asInteger;
+    ExcluirColuna(cdsVariacoes.FieldByName('tamanho').AsString);
+    cdsVariacoes.Locate('NUM_VARIACAO', pos, []);
     cdsVariacoes.Delete;
     cdsVariacoes.First;
     for I := 0 to cdsVariacoes.RecordCount - 1 do

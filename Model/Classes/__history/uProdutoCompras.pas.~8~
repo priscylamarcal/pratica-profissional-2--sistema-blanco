@@ -1,0 +1,154 @@
+unit uProdutoCompras;
+
+interface
+
+uses Classes,
+     SysUtils,
+     uPai,
+     uVariacoesRoupas;
+
+type ProdutoCompra = class
+
+  private
+
+
+  protected
+  numeroProduto: integer;
+	variacoesRoupas: VariacaoRoupa;
+  qtd: integer;
+  valorUnitario: currency;
+  desconto: currency;
+  id_Compra: integer;
+  valorTotal: currency;
+  public
+     constructor crieObj;
+     destructor destrua_se;
+
+     function getvariacoesRoupas: VariacaoRoupa;
+     function getqtd: integer;
+     function getvalorUnitario: currency;
+     function getdesconto: currency;
+     function getid_Compra: integer;
+     function getvalorTotal: currency;
+     function getnumeroProduto: integer;
+
+     procedure setvariacoesRoupas(pVariacoesRoupas: VariacaoRoupa);
+     procedure setqtd(pQtd: integer);
+     procedure setvalorUnitario(pValorUnitario: currency);
+     procedure setdesconto(pDesconto: currency);
+     procedure setid_Compra(pId_Compra: integer);
+     procedure setvalorTotal(pValorTotal: currency);
+     procedure setnumeroProduto(pNumeroProduto: integer);
+
+     function clone : ProdutoCompra;
+     procedure limparDados;
+  end;
+  implementation
+{ ProdutoCompra }
+
+function ProdutoCompra.clone: ProdutoCompra;
+begin
+  result := ProdutoCompra.crieObj;
+
+  result.variacoesRoupas := variacoesRoupas.Clone;
+  result.setqtd(qtd);
+  result.setvalorUnitario(ValorUnitario);
+  result.setdesconto(Desconto);
+  result.setid_Compra(id_Compra);
+  result.setvalorTotal(ValorTotal);
+  result.setnumeroProduto(NumeroProduto);
+end;
+
+constructor ProdutoCompra.crieObj;
+begin
+   variacoesRoupas := VariacaoRoupa.crieObj;
+   limparDados;
+end;
+
+destructor ProdutoCompra.destrua_se;
+begin
+   variacoesRoupas.destrua_se;
+end;
+
+function ProdutoCompra.getdesconto: currency;
+begin
+   result := desconto;
+end;
+
+function ProdutoCompra.getid_Compra: integer;
+begin
+   result := id_Compra;
+end;
+
+function ProdutoCompra.getnumeroProduto: integer;
+begin
+  result := numeroProduto;
+end;
+
+function ProdutoCompra.getqtd: integer;
+begin
+   result := qtd;
+end;
+
+function ProdutoCompra.getvalorTotal: currency;
+begin
+   result := valorTotal;
+end;
+
+function ProdutoCompra.getvalorUnitario: currency;
+begin
+   result := ValorUnitario;
+end;
+
+function ProdutoCompra.getvariacoesRoupas: VariacaoRoupa;
+begin
+   result := VariacoesRoupas.clone;
+end;
+
+procedure ProdutoCompra.limparDados;
+begin
+  variacoesRoupas.limparDados;
+  qtd := 0;
+  valorUnitario := 0;
+  desconto := 0;
+  id_Compra := 0;
+  valorTotal := 0;
+  numeroProduto := 0;
+end;
+
+procedure ProdutoCompra.setdesconto(pDesconto: currency);
+begin
+  desconto := pDesconto;
+end;
+
+procedure ProdutoCompra.setid_Compra(pId_Compra: integer);
+begin
+  id_compra := pId_Compra;
+end;
+
+procedure ProdutoCompra.setnumeroProduto(pNumeroProduto: integer);
+begin
+  numeroProduto := pNumeroProduto;
+end;
+
+procedure ProdutoCompra.setqtd(pQtd: integer);
+begin
+  Qtd := pQtd;
+end;
+
+procedure ProdutoCompra.setvalorTotal(pValorTotal: currency);
+begin
+  valorTotal := pValorTotal;
+end;
+
+procedure ProdutoCompra.setvalorUnitario(pValorUnitario: currency);
+begin
+  ValorUnitario := PValorUnitario;
+end;
+
+procedure ProdutoCompra.setvariacoesRoupas(pVariacoesRoupas: VariacaoRoupa);
+begin
+  VariacoesRoupas := pVariacoesRoupas.clone;
+end;
+
+end.

@@ -10,13 +10,11 @@
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object pnl_principal: TPanel
     Left = 0
@@ -35,6 +33,8 @@
     ParentFont = False
     TabOrder = 0
     OnMouseEnter = pnl_principalMouseEnter
+    ExplicitWidth = 1366
+    ExplicitHeight = 728
     object pnl_topo: TPanel
       Left = 0
       Top = 0
@@ -46,6 +46,7 @@
       ParentBackground = False
       TabOrder = 0
       OnMouseEnter = pnl_topoMouseEnter
+      ExplicitWidth = 1366
       object img_logo2: TImage
         Left = 49
         Top = 0
@@ -2944,6 +2945,7 @@
       Color = clWhite
       ParentBackground = False
       TabOrder = 2
+      ExplicitWidth = 1366
       object pnl_menu: TPanel
         Left = 0
         Top = 0
@@ -3190,7 +3192,7 @@
           ParentFont = False
           OnMouseEnter = spb_menu_localidadeMouseEnter
           OnMouseLeave = spb_menu_localidadeMouseLeave
-          ExplicitLeft = 294
+          ExplicitLeft = 284
           ExplicitTop = 1
         end
         object spb_menu_estoque: TSpeedButton
@@ -3681,6 +3683,7 @@
         BevelOuter = bvNone
         ParentBackground = False
         TabOrder = 1
+        ExplicitWidth = 1366
       end
       object pnl_sair: TPanel
         Left = 1230
@@ -3690,6 +3693,7 @@
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 2
+        ExplicitLeft = 1226
         object spb_sair: TSpeedButton
           Left = 8
           Top = 0
@@ -4220,7 +4224,6 @@
         Cursor = crHandPoint
         Align = alTop
         Caption = 'Vendas'
-        Enabled = False
         Flat = True
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clGray
@@ -4229,6 +4232,7 @@
         Font.Style = []
         Margin = 10
         ParentFont = False
+        OnClick = spb_vendasClick
         OnMouseEnter = spb_paisesMouseEnter
         OnMouseLeave = spb_paisesMouseLeave
         ExplicitLeft = 2

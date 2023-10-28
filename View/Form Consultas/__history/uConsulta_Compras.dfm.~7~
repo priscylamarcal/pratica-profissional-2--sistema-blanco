@@ -1,0 +1,12 @@
+inherited form_consulta_compras: Tform_consulta_compras
+  Caption = 'Consulta de Compras'
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    inherited pnl_topo: TPanel
+      inherited pnl_dentro_topo: TPanel
+        Width = 1288
+        ExplicitWidth = 1288
+      end
+    end
+  end
+end

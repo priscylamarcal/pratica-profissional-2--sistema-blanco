@@ -17,11 +17,14 @@ type ctrlVariacoesRoupas = class (Ctrl)
     destructor destrua_se;                            override;
     procedure setDM ( pDM : TObject );                override;
     function getDS : TObject;                         override;
+    function getDSView : TObject;
     function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
+    function pesquisarView ( AFilter: TFilterSearch; pChave : string ): string;
     function salvar ( pObj : TObject ) : string;      override;
     function excluir ( pObj : TObject ) : string;     override;
     function carregar ( pObj : TObject ) : string;    override;
     function salvarVariacaoRoupa ( lista: TObjectList<VariacaoRoupa> ) : string;
+    function recuperar(var pvariacaoRoupa: VariacaoRoupa) : boolean;
 
     procedure setCtrlCores ( pCtrl : ctrlCores );
     function getCtrlCores : ctrlCores;
@@ -88,9 +91,26 @@ begin
   Result:= aDaoVariacoesRoupas.getDS;
 end;
 
+function ctrlVariacoesRoupas.getDSView: TObject;
+begin
+  Result:= aDaoVariacoesRoupas.getDSView;
+end;
+
 function ctrlVariacoesRoupas.pesquisar(AFilter: TFilterSearch; pChave: string): string;
 begin
   Result:= aDaoVariacoesRoupas.pesquisar(AFilter, pChave);
+end;
+
+function ctrlVariacoesRoupas.pesquisarView(AFilter: TFilterSearch;
+  pChave: string): string;
+begin
+  Result:= aDaoVariacoesRoupas.pesquisarView(AFilter, pChave);
+end;
+
+function ctrlVariacoesRoupas.recuperar(
+  var pvariacaoRoupa: VariacaoRoupa): boolean;
+begin
+  result := aDaoVariacoesRoupas.recuperar(pvariacaoRoupa);
 end;
 
 function ctrlVariacoesRoupas.RetornaListaVariacoesRoupas(const ACodRoupa: Integer): TObjectList<VariacaoRoupa>;

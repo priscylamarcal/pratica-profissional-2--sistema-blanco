@@ -145,9 +145,9 @@ begin
         end;
       1:
         begin
-          if edt_pesquisa.Text = '' then
+          if Length( edt_pesquisa.Text ) < 3 then
           begin
-            MessageDlg( 'Campo do filtro não pode ser vazio!', MtInformation, [ MbOK ], 0 );
+            MessageDlg( 'Digite ao menos 3 caracteres para consulta!', MtInformation, [ MbOK ], 0 );
             edt_pesquisa.SetFocus;
             Exit;
           end;
@@ -171,15 +171,10 @@ begin
 end;
 
 procedure Tform_consulta_condicoes_pagamentos.sair;
-var mCondicao : CondicoesPagamentos;
 begin
   if btn_botao_sair.Caption= 'Selecionar' then
   begin
-    mCondicao:= CondicoesPagamentos.crieObj;
-    aCtrlCondicoes.carregar( TObject ( mCondicao ) );
-    aCondicaoPagamento.setCodigo( mCondicao.getCodigo );
-    aCondicaoPagamento.setCondicao( mCondicao.getCondicao );
-   // aCondicaoPagamento.setaFormaPagamento( mCondicao.getaFormaPagamento );
+    aCtrlCondicoes.carregar( TObject ( aCondicaoPagamento ) );
 
     inherited sair;
   end

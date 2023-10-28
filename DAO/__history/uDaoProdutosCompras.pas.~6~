@@ -1,0 +1,265 @@
+unit uDaoProdutosCompras;
+
+interface
+
+uses uDAO,
+  uFilterSearch, uProdutoCompras, uVariacoesRoupas,
+
+  System.Generics.Collections, System.SysUtils;
+
+type
+  daoProdutoCompra = class(DAO)
+  private
+
+  protected
+  public
+    constructor crieObj; override;
+    function getDS: TObject; override;
+    function pesquisar(AFilter: TFilterSearch; pChave: string): string;
+      override;
+    function salvar(pObj: TObject): string; override;
+    function excluir(pObj: TObject): string; override;
+    function carregar(pObj: TObject): string; override;
+    function salvarLista(lista: TObjectList<ProdutoCompra>): string;
+    function carregarLista(lista: TObjectList<ProdutoCompra>): string;
+
+    function RetornaListaProdutoCompra(const ACodCompra: Integer) : TObjectList<ProdutoCompra>;
+    function DeleteListaProdutoCompra(const ACodCompra: Integer): Boolean;
+  end;
+
+implementation
+uses
+  FireDAC.Comp.Client;
+{ daoVariacoesRoupas }
+
+function daoProdutoCompra.carregar(pObj: TObject): string;
+var
+  mVariacaoRoupa: VariacaoRoupa;
+  mProdutoCompra: ProdutoCompra;
+begin
+  mProdutoCompra := ProdutoCompra(pObj);
+  mVariacaoRoupa := mProdutoCompra.getvariacoesRoupas;
+
+  mProdutoCompra.setNumeroProduto(aDM.QProdutosCompras.FieldByName('NUMERO_PRODUTO').AsInteger);
+
+  mProdutoCompra.getVariacoesRoupas.setNumeroVariacao
+    (aDM.QProdutosCompras.FieldByName('NUMERO_VARIACAO').AsInteger);
+
+  mProdutoCompra.getVariacoesRoupas.setcodRoupa
+    (aDM.QProdutosCompras.FieldByName('COD_ROUPA').AsInteger);
+
+  mProdutoCompra.setqtd((aDM.QProdutosCompras.FieldByName('QTD').AsInteger));
+  mProdutoCompra.setValorUnitario((aDM.QProdutosCompras.FieldByName('VALOR_UNITARIO').AsCurrency));
+  mProdutoCompra.setDesconto((aDM.QProdutosCompras.FieldByName('DESCONTO').AsCurrency));
+  mProdutoCompra.setValorTotal((aDM.QProdutosCompras.FieldByName('VALOR_TOTAL').AsCurrency));
+
+end;
+
+function daoProdutoCompra.RetornaListaProdutoCompra(const ACodCompra: Integer)
+  : TObjectList<ProdutoCompra>;
+var
+  AProdutoCompra: ProdutoCompra;
+  AQuery  : TFDQuery;
+begin
+  Result := nil;
+  AQuery := TFDQuery.Create(nil);
+  try
+    AQuery.Connection  := adm.Conexao;
+    AQuery.Transaction := aDM.Transacao;
+
+    if (AQuery.Active) then
+     AQuery.Close;
+    AQuery.SQL.Clear;
+
+    AQuery.SQL.Add('SELECT * FROM PRODUTOS_COMPRAS');
+    AQuery.SQL.Add('WHERE COD_COMPRA = :COD_COMPRA');
+    AQuery.ParamByName('COD_COMPRA').AsInteger := ACodCompra;
+    AQuery.Open;
+
+    AQuery.First;
+
+    Result := TObjectList<ProdutoCompra>.Create;
+    while not(AQuery.Eof) do
+    begin
+      AProdutoCompra := ProdutoCompra.crieObj;
+
+      with AProdutoCompra, AQuery do
+      begin
+        setNumeroProduto(FieldByName('numero_produto').AsInteger);
+
+        getVariacoesRoupas.setNumeroVariacao
+          (FieldByName('NUMERO_VARIACAO_ROUPA').AsInteger);
+
+        getVariacoesRoupas.setcodRoupa
+          (FieldByName('CODIGO_VARIACAO_ROUPA').AsInteger);
+
+        setqtd(FieldByName('QTD').AsInteger);
+        setValorUnitario(FieldByName('VALOR_UNITARIO').AsCurrency);
+        setDesconto(FieldByName('DESCONTO').AsCurrency);
+        setValorTotal(FieldByName('VALOR_TOTAL').AsCurrency);
+        setId_Compra(FieldByName('ID_Compra').AsInteger);
+
+      end;
+
+      Result.Add(AProdutoCompra);
+      AQuery.Next;
+    end;
+
+    AQuery.Close;
+  finally
+    FreeAndNil(AQuery);
+  end;
+end;
+
+function daoProdutoCompra.carregarLista(lista: TObjectList<ProdutoCompra>): string;
+begin
+
+end;
+
+constructor daoProdutoCompra.crieObj;
+begin
+  inherited;
+end;
+
+function daoProdutoCompra.DeleteListaProdutoCompra(const ACodCompra: Integer): Boolean;
+begin
+  if (aDM.QProdutosCompras.Active) then
+    aDM.QProdutosCompras.Close;
+
+  if not aDM.Conexao.InTransaction then
+    aDM.Transacao.StartTransaction;
+  try
+    aDM.QProdutosCompras.SQL.Clear;
+    aDM.QProdutosCompras.SQL.Add('DELETE FROM PRODUTOS_COMPRAS WHERE COD_COMPRA = :COD_COMPRA');
+    aDM.QProdutosCompras.ParamByName('COD_COMPRA').AsInteger := ACodCompra;
+    aDM.QProdutosCompras.ExecSQL;
+
+    Result := (aDM.QProdutosCompras.RowsAffected > 0);
+
+    aDM.Transacao.Commit;
+  except
+    on e: Exception do
+    begin
+      raise Exception.Create('Erro:' + e.Message);
+      Result := False;
+      aDM.Transacao.Rollback;
+    end;
+  end;
+end;
+
+function daoProdutoCompra.excluir(pObj: TObject): string;
+begin
+  aDM.Conexao.StartTransaction;
+
+  aDM.QProdutosCompras.SQL.Clear;
+  aDM.QProdutosCompras.SQL.Add
+    ('DELETE FROM PRODUTOS_COMPRAS WHERE COD_COMPRAS = :COD_COMPRAS');
+  aDM.QProdutosCompras.ParamByName('COD_COMPRAS').AsInteger := ProdutoCompra(pObj)
+    .getaCodRoupa;
+  aDM.QProdutosCompras.ExecSQL;
+
+  try
+    aDM.Conexao.Commit;
+    Result := 'SUCESSO';
+  except
+    aDM.Conexao.Rollback;
+    Result := 'ERRO';
+  end;
+end;
+
+function daoProdutoCompra.getDS: TObject;
+begin
+  Result := aDM.DSProdutoCompras;
+end;
+
+function daoProdutoCompra.pesquisar(AFilter: TFilterSearch; pChave: string): string;
+var
+  msql: string;
+begin
+  msql := 'SELECT * FROM PRODUTOS_COMPRAS';
+
+  case AFilter.TipoConsulta of
+
+//    TpCCodigo:
+//      begin
+//        msql := 'SELECT * FROM VariacoesRoupas WHERE COD =' + IntToStr(AFilter.Codigo);
+//      end;
+
+    // TpCParam:
+    // begin
+    // msql:= ( 'SELECT * FROM VariacoesRoupas WHERE ESTADO LIKE  ' + QuotedStr( '%' + AFilter.Parametro + '%' ) );
+    // end;
+
+    TpCTODOS:
+      begin
+        msql := 'SELECT * FROM PRODUTOS_COMPRAS ORDER BY ID_COMPRA';
+      end;
+
+  end;
+
+  aDM.QProdutosCompras.Active   := False;
+  aDM.QProdutosCompras.SQL.Text := msql;
+  aDM.QProdutosCompras.Open;
+  Result := '';
+end;
+
+function daoProdutoCompra.salvar(pObj: TObject): string;
+var
+  mProdutoCompra: ProdutoCompra;
+  mVariacaoRoupa: VariacaoRoupa;
+
+begin
+  mProdutoCompra := ProdutoCompra(pObj);
+  mVariacaoRoupa := mProdutoCompra.getvariacoesRoupas;
+
+  if aDM.QProdutosCompras.Active then
+    aDM.QProdutosCompras.Close;
+  aDM.QProdutosCompras.SQL.Clear;
+
+  if not(aDM.Conexao.InTransaction) then
+    aDM.Transacao.StartTransaction;
+  try
+    aDM.QProdutosCompras.SQL.Add('insert into PRODUTOS_COMPRAS');
+    aDM.QProdutosCompras.SQL.Add('(NUMERO_PRODUTO, QTD, NUMERO_VARIACAO_ROUPA, CODIGO_VARIACAO_ROUPA, VALOR_UNITARIO, DESCONTO, VALOR_TOTAL, ID_COMPRA)');
+    aDM.QProdutosCompras.SQL.Add('values');
+    aDM.QProdutosCompras.SQL.Add('(:NUMERO_PRODUTO, :QTD, :NUMERO_VARIACAO_ROUPA, :CODIGO_VARIACAO_ROUPA, :VALOR_UNITARIO, :DESCONTO, :VALOR_TOTAL, :ID_COMPRA)');
+
+    aDM.QProdutosCompras.ParamByName('NUMERO_PRODUTO').AsInteger  := mProdutoCompra.getNumeroProduto;
+	aDM.QProdutosCompras.ParamByName('QTD').AsInteger  := mProdutoCompra.getQtd;
+	aDM.QProdutosCompras.ParamByName('VALOR_UNITARIO').AsCurrency  := mProdutoCompra.getValorUnitario;
+	aDM.QProdutosCompras.ParamByName('DESCONTO').AsCurrency  := mProdutoCompra.getDesconto;
+	aDM.QProdutosCompras.ParamByName('VALOR_TOTAL').AsCurrency  := mProdutoCompra.getValorTotal;
+	aDM.QProdutosCompras.ParamByName('ID_COMPRA').AsCurrency  := mProdutoCompra.getIdCompra;
+	aDM.QProdutosCompras.ParamByName('NUMERO_VARIACAO_ROUPA').AsInteger := mVariacaoCompra.getNumeroVariacao;
+	aDM.QProdutosCompras.ParamByName('CODIGO_VARIACAO_ROUPA').AsInteger := mVariacaoCompra.getRoupa.getCodigo;
+
+    aDM.QProdutosCompras.ExecSQL;
+
+    aDM.Transacao.Commit;
+    Result := 'S';
+  except
+    on e: Exception do
+    begin
+      raise Exception.Create('Erro: ' + e.Message);
+      Result := e.Message;
+      aDM.Transacao.Rollback;
+    end;
+  end;
+end;
+
+function daoProdutoCompra.salvarLista(lista: TObjectList<ProdutoCompra>): string;
+var
+  I: Integer;
+  Obj: TObject;
+  CodRoupa: Integer;
+begin
+  // Result := False;
+
+  for I := 0 to lista.Count - 1 do
+  begin
+    Obj := lista[I];
+    Result := Self.salvar(Obj);
+  end;
+end;
+
+end.

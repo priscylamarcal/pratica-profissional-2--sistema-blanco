@@ -10,7 +10,7 @@ uses
   uPaises, uEstados, uDepartamentos, uCores, uColecoes, uGruposRoupas,
   uMarcas, uTamanhos, uFormaPagamento, uTiposContatos, uCidades, uCargos,
   uCondicoesPagamentos, uFornecedores, uFuncionarios, uClientes, uRoupas,
-  uParcelas, uVariacoesRoupas,
+  uParcelas, uVariacoesRoupas, uCompras, uParcelasCompras,
 
   uInter,
 
@@ -18,7 +18,7 @@ uses
   uCtrlGruposRoupas, uCtrlMarcas, uCtrlTamanhos, uCtrlFormasPagamentos,
   uCtrlTiposContatos, uCtrlCidades, uCtrlCargos, uCtrlCondicoesPagamentos,
   uCtrlFornecedores, uCtrlFuncionarios, uCtrlClientes, uCtrlRoupas, uCtrlParcelas,
-  uCtrlVariacoesRoupas, uCtrlContatos,
+  uCtrlVariacoesRoupas, uCtrlContatos, uCtrlCompras, uCtrlProdutosCompras, uCtrlParcelasCompras,
 
   uDM ;
 
@@ -132,6 +132,7 @@ type
     procedure spb_cidadesClick(Sender: TObject);
     procedure spb_comprasClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure spb_vendasClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -152,6 +153,7 @@ type
     oFuncionario        : Funcionarios;
     oCliente            : Clientes;
     aRoupa              : Roupas;
+    aCompra             : Compras;
 
 
     aInter  : Inter;
@@ -176,6 +178,9 @@ type
     aCtrlParcelas       : ctrlParcelas;
     aCtrlVariacoesRoupas: CtrlVariacoesRoupas;
     aCtrlContatos:        CtrlContatos;
+    aCtrlCompras:         CtrlCompras;
+    aCtrlProdutosCompras: CtrlProdutosCompras;
+    aCtrlParcelasCompras: CtrlParcelaCompra;
 
     aDm : TDM;
 
@@ -216,6 +221,7 @@ begin
   oFuncionario.destrua_se;
   oCliente.destrua_se;
   aRoupa.destrua_se;
+  aCompra.destrua_se;
 
   aCtrlPais.destrua_se;
   aCtrlDepartamento.destrua_se;
@@ -234,6 +240,9 @@ begin
   aCtrlFuncionarios.destrua_se;
   aCtrlClientes.destrua_se;
   aCtrlRoupas.destrua_se;
+  aCtrlCompras.destrua_se;
+  aCtrlProdutosCompras.destrua_se;
+  aCtrlParcelasCompras.destrua_se;
 
   aDm.DisposeOf;
 end;
@@ -259,6 +268,7 @@ begin
   oFuncionario          := Funcionarios.crieObj;
   oCliente              := Clientes.crieObj;
   aRoupa                := Roupas.crieObj;
+  aCompra               := Compras.crieObj;
 
   aCtrlPais             := ctrlPaises.crieObj;
   aCtrlEstado           := ctrlEstados.crieObj;
@@ -280,6 +290,9 @@ begin
   aCtrlParcelas         := ctrlParcelas.crieObj;
   aCtrlVariacoesRoupas  := CtrlVariacoesRoupas.crieObj;
   aCtrlContatos         := CtrlContatos.CrieObj;
+  aCtrlCompras          := CtrlCompras.crieObj;
+  aCtrlProdutosCompras  := CtrlProdutosCompras.crieObj;
+  aCtrlParcelasCompras  := CtrlParcelaCompra.crieObj;
 
   aDm:= TDM.Create(nil);
 
@@ -303,6 +316,9 @@ begin
   aCtrlParcelas.setDM(aDm);
   aCtrlVariacoesRoupas.setDM(aDm);
   aCtrlContatos.setDm(aDm);
+  aCtrlCompras.setDM(aDm);
+  aCtrlProdutosCompras.setDM(aDm);
+  aCtrlParcelasCompras.setDM(aDm);
 
   aCtrlEstado.setCtrlPaises( aCtrlPais );
 
@@ -335,6 +351,12 @@ begin
   aCtrlRoupas.setCtrlFornecedores( aCtrlFornecedores );
   aCtrlRoupas.setCtrlColecoes( aCtrlColecao );
 
+  aCtrlCompras.setCtrlFornecedores( aCtrlFornecedores );
+  aCtrlCompras.setCtrlCondicoesPagamentos( aCtrlCondicoes );
+  aCtrlCompras.setCtrlVariacoesRoupas( aCtrlVariacoesRoupas );
+  aCtrlCompras.setCtrlProdutosCompras( aCtrlProdutosCompras );
+  aCtrlCompras.setCtrlRoupas( aCtrlRoupas );
+  aCtrlCompras.setCtrlParcelasCompras( aCtrlParcelasCompras );
 
   aCtrlCondicoes.SetCtrlParcelas(aCtrlParcelas);
   aCtrlRoupas.setCtrlVariacoesRoupas(aCtrlVariacoesRoupas);
@@ -382,7 +404,7 @@ end;
 
 procedure Tform_principal.spb_comprasClick(Sender: TObject);
 begin
-  aInter.PDCompras(nil, nil);
+  aInter.PDCompras(aCtrlCompras, aCompra);
 end;
 
 procedure Tform_principal.spb_condicoes_pagamentoClick(Sender: TObject);
@@ -454,6 +476,11 @@ end;
 procedure Tform_principal.spb_tipos_contatoClick(Sender: TObject);
 begin
   aInter.PDTiposContatos( aCtrlTipoContato , oTipoContato );
+end;
+
+procedure Tform_principal.spb_vendasClick(Sender: TObject);
+begin
+  aInter.PDVendas(nil, nil);
 end;
 
 procedure Tform_principal.spb_marcaClick(Sender: TObject);

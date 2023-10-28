@@ -1,0 +1,116 @@
+unit uCtrlProdutosCompras;
+
+interface
+
+uses uController, uFilterSearch, uVariacoesRoupas,
+    system.Generics.Collections, uCtrlVariacoesRoupas, uProdutoCompras, uDaoProdutosCompras;
+
+type ctrlProdutosCompras = class (Ctrl)
+  private
+
+  protected
+    aDaoProdutosCompras : DaoProdutosCompras;
+    aCtrlVariacoesRoupas : CtrlVariacoesRoupas;
+  public
+    constructor crieObj;                              override;
+    destructor destrua_se;                            override;
+    procedure setDM ( pDM : TObject );                override;
+    function getDS : TObject;                         override;
+    function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
+    function salvar ( pObj : TObject ) : string;      override;
+    function excluir ( pObj : TObject ) : string;     override;
+    function carregar ( pObj : TObject ) : string;    override;
+    function salvarProdutoCompra ( lista: TObjectList<ProdutoCompra> ) : string;
+
+    procedure setCtrlVariacoesRoupas ( pCtrl : ctrlVariacoesRoupas );
+    function getCtrlVariacoesRoupas : ctrlVariacoesRoupas;
+
+    function RetornaListaProdutoCompra(const ACodCompra: Integer): TObjectList<ProdutoCompra>;
+    function DeleteListaProdutoCompra(const ACodCompra: Integer): Boolean;
+end;
+
+implementation
+
+{ ctrlProdutosCompras }
+
+function ctrlProdutosCompras.carregar(pObj: TObject): string;
+var aFilter: TFilterSearch;
+    tipoConsulta : TTipoConsulta;
+    pChave : string;
+    mVariacaoRoupa: VariacaoRoupa;
+begin
+  aDaoProdutosCompras.carregar( pObj );
+
+  mVariacaoRoupa := ProdutoCompra( pObj ).getvariacoesRoupas;
+  aCtrlVariacoesRoupas.pesquisar(aFilter, pChave);
+end;
+
+constructor ctrlProdutosCompras.crieObj;
+begin
+  inherited;
+
+end;
+
+function ctrlProdutosCompras.DeleteListaProdutoCompra(
+  const ACodCompra: Integer): Boolean;
+begin
+
+end;
+
+destructor ctrlProdutosCompras.destrua_se;
+begin
+
+  inherited;
+end;
+
+function ctrlProdutosCompras.excluir(pObj: TObject): string;
+begin
+
+end;
+
+function ctrlProdutosCompras.getCtrlVariacoesRoupas: ctrlVariacoesRoupas;
+begin
+
+end;
+
+function ctrlProdutosCompras.getDS: TObject;
+begin
+
+end;
+
+function ctrlProdutosCompras.pesquisar(AFilter: TFilterSearch;
+  pChave: string): string;
+begin
+
+end;
+
+function ctrlProdutosCompras.RetornaListaProdutoCompra(
+  const ACodCompra: Integer): TObjectList<ProdutoCompra>;
+begin
+
+end;
+
+function ctrlProdutosCompras.salvar(pObj: TObject): string;
+begin
+
+end;
+
+function ctrlProdutosCompras.salvarProdutoCompra(
+  lista: TObjectList<ProdutoCompra>): string;
+begin
+
+end;
+
+procedure ctrlProdutosCompras.setCtrlVariacoesRoupas(
+  pCtrl: ctrlVariacoesRoupas);
+begin
+
+end;
+
+procedure ctrlProdutosCompras.setDM(pDM: TObject);
+begin
+  inherited;
+
+end;
+
+end.

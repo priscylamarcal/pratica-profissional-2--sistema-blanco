@@ -1,0 +1,29 @@
+inherited form_consulta_Variacoes_Roupas: Tform_consulta_Variacoes_Roupas
+  Caption = 'form_consulta_Variacoes_Roupas'
+  ClientWidth = 1308
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    Width = 1308
+    inherited pnl_topo: TPanel
+      Width = 1308
+      inherited pnl_dentro_topo: TPanel
+        Width = 1292
+        ExplicitWidth = 1288
+      end
+    end
+    inherited pnl_bottom: TPanel
+      Width = 1308
+    end
+    inherited pnl_db_grid: TPanel
+      Width = 1308
+      inherited ScrollBox1: TScrollBox
+        Height = 430
+        ExplicitWidth = 1304
+        ExplicitHeight = 430
+        inherited DBGrid: TDBGrid
+          Height = 430
+        end
+      end
+    end
+  end
+end

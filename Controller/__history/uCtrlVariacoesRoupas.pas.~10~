@@ -1,0 +1,133 @@
+unit uCtrlVariacoesRoupas;
+
+interface
+
+uses uController, uFilterSearch, uVariacoesRoupas,
+    system.Generics.Collections, uCores, uCtrlCores, uTamanhos, uCtrlTamanhos, uDaoVariacoesRoupas;
+
+type ctrlVariacoesRoupas = class (Ctrl)
+  private
+
+  protected
+    aDaoVariacoesRoupas : daoVariacaoRoupa;
+    aCtrlCores : CtrlCores;
+    aCtrlTamanhos: CtrlTamanhos;
+  public
+    constructor crieObj;                              override;
+    destructor destrua_se;                            override;
+    procedure setDM ( pDM : TObject );                override;
+    function getDS : TObject;                         override;
+    function getDSView : TObject;                         override;
+    function pesquisar ( AFilter: TFilterSearch; pChave : string ): string; override;
+    function salvar ( pObj : TObject ) : string;      override;
+    function excluir ( pObj : TObject ) : string;     override;
+    function carregar ( pObj : TObject ) : string;    override;
+    function salvarVariacaoRoupa ( lista: TObjectList<VariacaoRoupa> ) : string;
+
+    procedure setCtrlCores ( pCtrl : ctrlCores );
+    function getCtrlCores : ctrlCores;
+    procedure setCtrlTamanhos ( pCtrl : ctrlTamanhos );
+    function getCtrlTamanhos : ctrlTamanhos;
+
+    function RetornaListaVariacoesRoupas(const ACodRoupa: Integer): TObjectList<VariacaoRoupa>;
+    function DeleteListaVariacoesRoupas(const ACodRoupa: Integer): Boolean;
+end;
+
+implementation
+
+{ ctrlVariacoesRoupas }
+
+function ctrlVariacoesRoupas.carregar(pObj: TObject): string;
+var mCor : Cores;
+    aFilter: TFilterSearch;
+    tipoConsulta : TTipoConsulta;
+    pChave : string;
+    mTamanho: Tamanhos;
+begin
+  aDaoVariacoesRoupas.carregar( pObj );
+
+  mCor:= VariacaoRoupa( pObj ).getaCor;
+  aCtrlCores.pesquisar(aFilter, pChave);
+
+  mTamanho := VariacaoRoupa( pObj ).getaTamanho;
+  aCtrlTamanhos.pesquisar(aFilter, pChave);
+
+end;
+
+constructor ctrlVariacoesRoupas.crieObj;
+begin
+  aDaoVariacoesRoupas:= daoVariacaoRoupa.crieObj;
+end;
+
+function ctrlVariacoesRoupas.DeleteListaVariacoesRoupas(const ACodRoupa: Integer): Boolean;
+begin
+  aDaoVariacoesRoupas.DeleteListaVariacoesRoupas(ACodRoupa);
+end;
+
+destructor ctrlVariacoesRoupas.destrua_se;
+begin
+  aDaoVariacoesRoupas.destrua_se;
+end;
+
+function ctrlVariacoesRoupas.excluir(pObj: TObject): string;
+begin
+
+end;
+
+function ctrlVariacoesRoupas.getCtrlCores: ctrlCores;
+begin
+  Result:= getCtrlCores;
+end;
+
+function ctrlVariacoesRoupas.getCtrlTamanhos: ctrlTamanhos;
+begin
+  Result:= getCtrlTamanhos;
+end;
+
+function ctrlVariacoesRoupas.getDS: TObject;
+begin
+  Result:= aDaoVariacoesRoupas.getDS;
+end;
+
+function ctrlVariacoesRoupas.getDSView: TObject;
+begin
+  Result:= aDaoVariacoesRoupas.getDSView;
+end;
+
+function ctrlVariacoesRoupas.pesquisar(AFilter: TFilterSearch; pChave: string): string;
+begin
+  Result:= aDaoVariacoesRoupas.pesquisar(AFilter, pChave);
+end;
+
+function ctrlVariacoesRoupas.RetornaListaVariacoesRoupas(const ACodRoupa: Integer): TObjectList<VariacaoRoupa>;
+begin
+  Result := aDaoVariacoesRoupas.RetornaListaVariacoesRoupas(ACodRoupa);
+end;
+
+function ctrlVariacoesRoupas.salvar(pObj: TObject): string;
+begin
+  aDaoVariacoesRoupas.salvar(pObj);
+end;
+
+function ctrlVariacoesRoupas.salvarVariacaoRoupa(lista: TObjectList<VariacaoRoupa>): string;
+begin
+  aDaoVariacoesRoupas.salvarLista(lista);
+end;
+
+procedure ctrlVariacoesRoupas.setCtrlCores(pCtrl: ctrlCores);
+begin
+  aCtrlCores:= pCtrl;
+end;
+
+procedure ctrlVariacoesRoupas.setCtrlTamanhos(pCtrl: ctrlTamanhos);
+begin
+  aCtrlTamanhos:= pCtrl;
+end;
+
+procedure ctrlVariacoesRoupas.setDM(pDM: TObject);
+begin
+  inherited;
+  aDaoVariacoesRoupas.setDM(pDM);
+end;
+
+end.

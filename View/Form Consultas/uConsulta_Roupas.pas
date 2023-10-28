@@ -1,13 +1,10 @@
 ﻿unit uConsulta_Roupas;
-
 interface
-
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uConsultaPai, Data.DB, Vcl.Grids,
   Vcl.DBGrids, Vcl.StdCtrls, ComboBox, campoEdit, Vcl.Buttons, Vcl.ExtCtrls,
   uCadastroProdutos, uRoupas, uCtrlRoupas, uFilterSearch;
-
 type
   Tform_consulta_roupas = class(Tform_consulta_pai)
     procedure FormShow(Sender: TObject);
@@ -15,7 +12,6 @@ type
   private
     { Private declarations }
     oCadastroProdutos : Tform_cadastro_produtos;
-
     aRoupa : Roupas;
     aCtrlRoupas : ctrlRoupas;
   public
@@ -29,69 +25,46 @@ type
     procedure setFrmCadastro ( pObj : TObject );                  override;
     procedure tipoFiltro;                                     override;
   end;
-
 var
   form_consulta_roupas: Tform_consulta_roupas;
-
 implementation
-
 {$R *.dfm}
-
 { Tform_consulta_roupas }
-
 procedure Tform_consulta_roupas.alterar;
 var form : Tform_cadastro_produtos;
 begin
   inherited;
-
   oCadastroProdutos.limpaEdt;
   aCtrlRoupas.carregar( aRoupa );
   oCadastroProdutos.conhecaObj( aCtrlRoupas, aRoupa );
-
   oCadastroProdutos.Caption:= 'Alteração de Roupa';
-
   oCadastroProdutos.ShowModal;
-
   if form.salvou then
     Self.pesquisar;      inherited;
-
 end;
-
 procedure Tform_consulta_roupas.conhecaObj(pCtrl, pObj: TObject);
 begin
   inherited;
   aRoupa:= Roupas( pObj );
   aCtrlRoupas:= ctrlRoupas( pCtrl );
-
   self.DBGrid.DataSource:= TDataSource( aCtrlRoupas.getDS );
 end;
-
 procedure Tform_consulta_roupas.excluir;
 var mCaption: string;
 begin
   inherited;
   aCtrlRoupas.carregar(aRoupa);
-
   mCaption := oCadastroProdutos.btn_botao_salvar.caption;
   oCadastroProdutos.btn_botao_salvar.caption := 'Excluir';
-
   oCadastroProdutos.conhecaObj( aCtrlRoupas, aRoupa );
-
   oCadastroProdutos.Caption:= 'Exclusão de Cargo';
-
   oCadastroProdutos.bloqueiaEdt;
-
   oCadastroProdutos.bloqueaiaBtnPesquisa;
-
   oCadastroProdutos.ShowModal;
-
   oCadastroProdutos.btn_botao_salvar.caption := mCaption;
-
   oCadastroProdutos.desbloqueiaEdt;
-
   oCadastroProdutos.desbloqueiaBtnPesquisa;
 end;
-
 procedure Tform_consulta_roupas.FormShow(Sender: TObject);
 begin
   inherited;
@@ -99,7 +72,6 @@ begin
   edt_pesquisa.Clear;
   self.pesquisar;   inherited;
 end;
-
 procedure Tform_consulta_roupas.novo;
 var form : Tform_cadastro_produtos;
 begin
@@ -107,22 +79,17 @@ begin
   aRoupa.limparDados;
   oCadastroProdutos.conhecaObj( aCtrlRoupas, aRoupa );
   oCadastroProdutos.limpaEdt;
-
   oCadastroProdutos.Caption:= 'Cadastro de Roupa';
-
   oCadastroProdutos.ShowModal;
-
   if form.salvou then
     Self.pesquisar;      inherited;
 end;
-
 procedure Tform_consulta_roupas.pesquisar;
 var vFilter : TFilterSearch;
     pchave : string;
 begin
   //inherited;
   VFilter   := TFilterSearch.Create;
-
   try
     Try
      case combobox_tipo_filtro.ItemIndex of
@@ -134,15 +101,14 @@ begin
             edt_pesquisa.SetFocus;
            Exit;
           end;
-
           vFilter.TipoConsulta:= TpCCodigo;
           vFilter.Codigo:= StrToInt(edt_pesquisa.Text);
         end;
     1:
         begin
-          if edt_pesquisa.Text = '' then
+          if Length( edt_pesquisa.Text ) < 3 then
           begin
-            MessageDlg( 'Campo do filtro não pode ser vazio!', MtInformation, [ MbOK ], 0 );
+            MessageDlg( 'Digite ao menos 3 caracteres para consulta!', MtInformation, [ MbOK ], 0 );
             edt_pesquisa.SetFocus;
             Exit;
           end;
@@ -154,7 +120,6 @@ begin
           VFilter.TipoConsulta := TpCTODOS;
         end;
     end;
-
   finally
     aCtrlRoupas.pesquisar(VFilter, pchave);
     VFilter.Free;
@@ -165,29 +130,32 @@ begin
     End;
 end;
 
-
 procedure Tform_consulta_roupas.sair;
 begin
-  inherited;
+  if (Self.btn_botao_sair.Caption = 'Selecionar') then
+  begin
+    aRoupa.setCodigo(DBGrid.DataSource.Dataset.FieldByName('COD_ROUPA').Value);
+    aCtrlRoupas.recuperar(aRoupa);
+
+    inherited sair;
+  end
+  else
+    inherited sair;;
 
 end;
-
 procedure Tform_consulta_roupas.setFrmCadastro(pObj: TObject);
 var form : Tform_cadastro_produtos;
 begin
   inherited;
   oCadastroProdutos := Tform_cadastro_produtos( pObj );
-
   if form.salvou then
     Self.pesquisar;      inherited;
 end;
-
 procedure Tform_consulta_roupas.spb_botao_pesquisarClick(Sender: TObject);
 begin
   pesquisar;
   inherited;
 end;
-
 procedure Tform_consulta_roupas.tipoFiltro;
 begin
   inherited;
@@ -214,5 +182,4 @@ begin
       end;
   end;
 end;
-
 end.

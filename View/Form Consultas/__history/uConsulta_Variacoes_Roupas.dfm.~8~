@@ -1,0 +1,32 @@
+inherited form_consulta_Variacoes_Roupas: Tform_consulta_Variacoes_Roupas
+  Caption = 'form_consulta_Variacoes_Roupas'
+  TextHeight = 13
+  inherited pnl_fundo: TPanel
+    inherited pnl_topo: TPanel
+      inherited pnl_dentro_topo: TPanel
+        Width = 1288
+        ExplicitWidth = 1284
+        inherited combobox_tipo_filtro: TComboBox1
+          Enabled = False
+        end
+      end
+    end
+    inherited pnl_bottom: TPanel
+      inherited pnl_botao_excluir: TPanel
+        inherited btn_botao_excluir: TSpeedButton
+          Enabled = False
+        end
+      end
+      inherited pnl_botao_novo: TPanel
+        inherited btn_botao_novo: TSpeedButton
+          Enabled = False
+        end
+      end
+      inherited pnl_botao_alterar: TPanel
+        inherited btn_botao_alterar: TSpeedButton
+          Enabled = False
+        end
+      end
+    end
+  end
+end

@@ -110,7 +110,7 @@ uses
   uParcelas in 'Model\Classes\uParcelas.pas',
   uCtrlParcelas in 'Controller\uCtrlParcelas.pas',
   uDaoParcelas in 'DAO\uDaoParcelas.pas',
-  uCadastroProdutoCompras in 'View\Form Cadastros\uCadastroProdutoCompras.pas' {form_cadastro_add_roupa_compra},
+  uCadastroProdutoVendas in 'View\Form Cadastros\uCadastroProdutoVendas.pas' {form_cadastro_add_roupa_venda},
   MaskEdit1 in 'Componentes Delphi\Source\MaskEdit1.pas',
   campoEdit in 'Componentes Delphi\Source\campoEdit.pas',
   ComboBox in 'Componentes Delphi\Source\ComboBox.pas',
@@ -120,7 +120,16 @@ uses
   uDaoVariacoesRoupas in 'DAO\uDaoVariacoesRoupas.pas',
   uContatos in 'Model\Classes\uContatos.pas',
   uCtrlContatos in 'Controller\uCtrlContatos.pas',
-  uDaoContatos in 'DAO\uDaoContatos.pas';
+  uDaoContatos in 'DAO\uDaoContatos.pas',
+  uDaoCompras in 'DAO\uDaoCompras.pas',
+  UCtrlCompras in 'Controller\UCtrlCompras.pas',
+  uProdutoCompras in 'Model\Classes\uProdutoCompras.pas',
+  uParcelasCompras in 'Model\Classes\uParcelasCompras.pas',
+  uDaoProdutosCompras in 'DAO\uDaoProdutosCompras.pas',
+  uConsulta_Variacoes_Roupas in 'View\Form Consultas\uConsulta_Variacoes_Roupas.pas' {form_consulta_Variacoes_Roupas},
+  uCtrlProdutosCompras in 'Controller\uCtrlProdutosCompras.pas',
+  uCtrlParcelasCompras in 'Controller\uCtrlParcelasCompras.pas',
+  uDaoParcelasCompras in 'DAO\uDaoParcelasCompras.pas';
 
 {$R *.res}
 begin
@@ -128,6 +137,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(Tform_principal, form_principal);
   Application.CreateForm(TDM, DM);
-  Application.CreateForm(Tform_cadastro_add_roupa_compra, form_cadastro_add_roupa_compra);
   Application.Run;
 end.

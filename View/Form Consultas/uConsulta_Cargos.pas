@@ -1,22 +1,17 @@
 unit uConsulta_Cargos;
-
 interface
-
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uConsultaPai, Data.DB, Vcl.Grids,
   Vcl.DBGrids, Vcl.StdCtrls, ComboBox, campoEdit, Vcl.Buttons, Vcl.ExtCtrls,
   uCadastroCargos, uCtrlCargos, uCargos, uFilterSearch;
-
 type
   Tform_consulta_cargos = class(Tform_consulta_pai)
     procedure FormShow(Sender: TObject);
     procedure spb_botao_pesquisarClick(Sender: TObject);
   private
     { Private declarations }
-
     oCadastroCargos : Tform_cadastro_cargos;
-
     oCargo      : Cargos;
     aCtrlCargos : ctrlCargos;
   public
@@ -30,66 +25,45 @@ type
     procedure setFrmCadastro ( pObj : TObject );                  override;
     procedure tipoFiltro;                                     override;
   end;
-
 var
   form_consulta_cargos: Tform_consulta_cargos;
-
 implementation
-
 {$R *.dfm}
-
 { Tform_consulta_cargos }
-
 procedure Tform_consulta_cargos.alterar;
 var form : Tform_cadastro_cargos;
 begin
   inherited;
   aCtrlCargos.carregar( oCargo );
   oCadastroCargos.conhecaObj( aCtrlCargos, oCargo );
-
   oCadastroCargos.Caption:= 'Alteração de Cargo';
-
   oCadastroCargos.ShowModal;
-
   if form.salvou then
     Self.pesquisar;      inherited;
 end;
-
 procedure Tform_consulta_cargos.conhecaObj(pCtrl, pObj: TObject);
 begin
   inherited;
   oCargo:= Cargos( pObj );
   aCtrlCargos:= ctrlCargos( pCtrl );
-
   self.DBGrid.DataSource:= TDataSource( aCtrlCargos.getDS );
 end;
-
 procedure Tform_consulta_cargos.excluir;
 var mCaption: string;
 begin
   inherited;
   aCtrlCargos.carregar(oCargo);
-
   mCaption := oCadastroCargos.btn_botao_salvar.caption;
   oCadastroCargos.btn_botao_salvar.caption := 'Excluir';
-
   oCadastroCargos.conhecaObj( aCtrlCargos, oCargo );
-
   oCadastroCargos.Caption:= 'Exclusão de Cargo';
-
   oCadastroCargos.bloqueiaEdt;
-
   oCadastroCargos.btn_pesquisa.Visible:= False;
-
   oCadastroCargos.ShowModal;
-
   oCadastroCargos.btn_botao_salvar.caption := mCaption;
-
   oCadastroCargos.desbloqueiaEdt;
-
   oCadastroCargos.btn_pesquisa.Visible:= True;
 end;
-
 procedure Tform_consulta_cargos.FormShow(Sender: TObject);
 begin
   inherited;
@@ -97,7 +71,6 @@ begin
   edt_pesquisa.Clear;
   self.pesquisar;   inherited;
 end;
-
 procedure Tform_consulta_cargos.novo;
 var form : Tform_cadastro_cargos;
 begin
@@ -105,22 +78,17 @@ begin
   oCargo.limparDados;
   oCadastroCargos.conhecaObj( aCtrlCargos, oCargo );
   oCadastroCargos.limpaEdt;
-
   oCadastroCargos.Caption:= 'Cadastro de Cargo';
-
   oCadastroCargos.ShowModal;
-
   if form.salvou then
     Self.pesquisar;      inherited;
 end;
-
 procedure Tform_consulta_cargos.pesquisar;
 var vFilter : TFilterSearch;
     pchave : string;
 begin
   //inherited;
   VFilter   := TFilterSearch.Create;
-
   try
     Try
      case combobox_tipo_filtro.ItemIndex of
@@ -132,15 +100,14 @@ begin
             edt_pesquisa.SetFocus;
            Exit;
           end;
-
           vFilter.TipoConsulta:= TpCCodigo;
           vFilter.Codigo:= StrToInt(edt_pesquisa.Text);
         end;
     1:
         begin
-          if edt_pesquisa.Text = '' then
+          if Length( edt_pesquisa.Text ) < 3 then
           begin
-            MessageDlg( 'Campo do filtro não pode ser vazio!', MtInformation, [ MbOK ], 0 );
+            MessageDlg( 'Digite ao menos 3 caracteres para consulta!', MtInformation, [ MbOK ], 0 );
             edt_pesquisa.SetFocus;
             Exit;
           end;
@@ -152,7 +119,6 @@ begin
           VFilter.TipoConsulta := TpCTODOS;
         end;
     end;
-
   finally
     aCtrlCargos.pesquisar(VFilter, pchave);
     VFilter.Free;
@@ -162,7 +128,6 @@ begin
 //    ShowMessage(e.ClassName +'asdfasdfasdf');
     End;
 end;
-
 procedure Tform_consulta_cargos.sair;
 var mCargo : Cargos;
 begin
@@ -172,29 +137,24 @@ begin
     aCtrlCargos.carregar( TObject ( mCargo ) );
     oCargo.setCodigo( mCargo.getCodigo );
     oCargo.setCargo( mCargo.getCargo );
-
     inherited sair;
   end
   else
     inherited sair;
 end;
-
 procedure Tform_consulta_cargos.setFrmCadastro(pObj: TObject);
 var form : Tform_cadastro_cargos;
 begin
   inherited;
   oCadastroCargos:= Tform_cadastro_cargos( pObj );
-
 //  if form.salvou then
 //    Self.pesquisar;      inherited;
 end;
-
 procedure Tform_consulta_cargos.spb_botao_pesquisarClick(Sender: TObject);
 begin
   pesquisar;
   inherited;
 end;
-
 procedure Tform_consulta_cargos.tipoFiltro;
 begin
   inherited;
@@ -221,5 +181,4 @@ begin
       end;
   end;
 end;
-
 end.

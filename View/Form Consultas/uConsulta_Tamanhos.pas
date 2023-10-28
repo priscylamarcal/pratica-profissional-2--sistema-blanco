@@ -1,13 +1,10 @@
 unit uConsulta_Tamanhos;
-
 interface
-
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uConsultaPai, Data.DB, Vcl.Grids,
   Vcl.DBGrids, Vcl.StdCtrls, ComboBox, campoEdit, Vcl.Buttons, Vcl.ExtCtrls,
   uCadastroTamanhos, uConsulta_Marcas, uTamanhos, uCtrlTamanhos, uFilterSearch;
-
 type
   Tform_consulta_tamanhos = class(Tform_consulta_pai)
     procedure spb_botao_pesquisarClick(Sender: TObject);
@@ -15,7 +12,6 @@ type
   private
     { Private declarations }
     oCadastroTamanhos : Tform_cadastro_tamanhos;
-
     oTamanho : Tamanhos;
     aCtrlTamanhos : ctrlTamanhos;
   public
@@ -29,60 +25,40 @@ type
     procedure setFrmCadastro ( pObj : TObject );                  override;
     procedure tipoFiltro;                                     override;
   end;
-
 var
   form_consulta_tamanhos: Tform_consulta_tamanhos;
-
 implementation
-
 {$R *.dfm}
-
 { Tform_consulta_tamanhos }
-
 procedure Tform_consulta_tamanhos.alterar;
 begin
   inherited;
   aCtrlTamanhos.carregar( oTamanho );
   oCadastroTamanhos.conhecaObj( aCtrlTamanhos, oTamanho );
-
   oCadastroTamanhos.Caption:= 'Alteração de Tamanho';
-
   oCadastroTamanhos.ShowModal;
-
 end;
-
 procedure Tform_consulta_tamanhos.conhecaObj(pCtrl, pObj: TObject);
 begin
   inherited;
   oTamanho:= Tamanhos( pObj );
   aCtrlTamanhos:= ctrlTamanhos( pCtrl );
-
   self.DBGrid.DataSource:= TDataSource( aCtrlTamanhos.getDS );
-
 end;
-
 procedure Tform_consulta_tamanhos.excluir;
 var mCaption: string;
 begin
   inherited;
   aCtrlTamanhos.carregar(oTamanho);
-
   mCaption := oCadastroTamanhos.btn_botao_salvar.caption;
   oCadastroTamanhos.btn_botao_salvar.caption := 'Excluir';
-
   oCadastroTamanhos.conhecaObj( aCtrlTamanhos, oTamanho );
-
   oCadastroTamanhos.Caption:= 'Exclusão de Cargo';
-
   oCadastroTamanhos.bloqueiaEdt;
-
   oCadastroTamanhos.ShowModal;
-
   oCadastroTamanhos.btn_botao_salvar.caption := mCaption;
-
   oCadastroTamanhos.desbloqueiaEdt;
 end;
-
 procedure Tform_consulta_tamanhos.FormShow(Sender: TObject);
 begin
   inherited;
@@ -90,7 +66,6 @@ begin
   edt_pesquisa.Clear;
   self.pesquisar;   inherited;
 end;
-
 procedure Tform_consulta_tamanhos.novo;
 var form : Tform_cadastro_tamanhos;
 begin
@@ -98,22 +73,17 @@ begin
   oTamanho.limparDados;
   oCadastroTamanhos.conhecaObj( aCtrlTamanhos, oTamanho );
   oCadastroTamanhos.limpaEdt;
-
   oCadastroTamanhos.Caption:= 'Cadastror de Tamanho';
-
   oCadastroTamanhos.ShowModal;
-
   if form.salvou then
     Self.pesquisar;      inherited;
 end;
-
 procedure Tform_consulta_tamanhos.pesquisar;
 var vFilter : TFilterSearch;
     pchave : string;
 begin
   //inherited;
   VFilter   := TFilterSearch.Create;
-
   try
     Try
      case combobox_tipo_filtro.ItemIndex of
@@ -125,15 +95,14 @@ begin
             edt_pesquisa.SetFocus;
            Exit;
           end;
-
           vFilter.TipoConsulta:= TpCCodigo;
           vFilter.Codigo:= StrToInt(edt_pesquisa.Text);
         end;
     1:
         begin
-          if edt_pesquisa.Text = '' then
+          if Length( edt_pesquisa.Text ) < 3 then
           begin
-            MessageDlg( 'Campo do filtro não pode ser vazio!', MtInformation, [ MbOK ], 0 );
+            MessageDlg( 'Digite ao menos 3 caracteres para consulta!', MtInformation, [ MbOK ], 0 );
             edt_pesquisa.SetFocus;
             Exit;
           end;
@@ -145,7 +114,6 @@ begin
           VFilter.TipoConsulta := TpCTODOS;
         end;
     end;
-
   finally
     aCtrlTamanhos.pesquisar(VFilter, pchave);
     VFilter.Free;
@@ -155,7 +123,6 @@ begin
 //    ShowMessage(e.ClassName +'asdfasdfasdf');
     End;
 end;
-
 procedure Tform_consulta_tamanhos.sair;
 var mTamanho : Tamanhos;
 begin
@@ -165,29 +132,24 @@ begin
     aCtrlTamanhos.carregar( TObject( mTamanho ) );
     oTamanho.setCodigo( mTamanho.getCodigo );
     oTamanho.setSiglaTamanho( mTamanho.getSiglaTamanho );
-
     inherited sair;
   end
   else
     inherited Sair;
 end;
-
 procedure Tform_consulta_tamanhos.setFrmCadastro(pObj: TObject);
 var form : Tform_cadastro_tamanhos;
 begin
   inherited;
   oCadastroTamanhos := Tform_cadastro_tamanhos( pObj );
-
   if form.salvou then
      self.pesquisar; inherited;
 end;
-
 procedure Tform_consulta_tamanhos.spb_botao_pesquisarClick(Sender: TObject);
 begin
   pesquisar;
   inherited;
 end;
-
 procedure Tform_consulta_tamanhos.tipoFiltro;
 begin
   inherited;
@@ -214,5 +176,4 @@ begin
       end;
   end;
 end;
-
 end.

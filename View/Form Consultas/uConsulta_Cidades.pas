@@ -141,9 +141,9 @@ begin
         end;
     1:
         begin
-          if edt_pesquisa.Text = '' then
+          if Length( edt_pesquisa.Text ) < 3 then
           begin
-            MessageDlg( 'Campo do filtro não pode ser vazio!', MtInformation, [ MbOK ], 0 );
+            MessageDlg( 'Digite ao menos 3 caracteres para consulta!', MtInformation, [ MbOK ], 0 );
             edt_pesquisa.SetFocus;
             Exit;
           end;

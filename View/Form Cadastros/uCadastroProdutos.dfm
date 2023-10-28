@@ -4,20 +4,19 @@ inherited form_cadastro_produtos: Tform_cadastro_produtos
   ClientWidth = 954
   OnActivate = FormActivate
   OnCreate = FormCreate
-  ExplicitWidth = 970
-  ExplicitHeight = 788
-  PixelsPerInch = 96
+  ExplicitWidth = 966
+  ExplicitHeight = 787
   TextHeight = 13
   inherited pnl_fundo: TPanel
     Width = 954
     Height = 749
-    ExplicitWidth = 954
-    ExplicitHeight = 749
+    ExplicitWidth = 950
+    ExplicitHeight = 748
     inherited ScrollBox1: TScrollBox
       Width = 954
       Height = 749
-      ExplicitWidth = 954
-      ExplicitHeight = 749
+      ExplicitWidth = 950
+      ExplicitHeight = 748
       inherited lbl_cod_usuario: TLabel
         Top = 1105
         ExplicitTop = 967
@@ -710,8 +709,8 @@ inherited form_cadastro_produtos: Tform_cadastro_produtos
         end
       end
       object edt_pesquisar_tamanho: PriTEdit
-        Left = 413
-        Top = 454
+        Left = 412
+        Top = 453
         Width = 150
         Height = 24
         TabStop = False
@@ -1207,7 +1206,7 @@ inherited form_cadastro_produtos: Tform_cadastro_produtos
         MudarCor = clCream
       end
       object GridVariacoes: TDBGrid
-        Left = 8
+        Left = 3
         Top = 544
         Width = 918
         Height = 172

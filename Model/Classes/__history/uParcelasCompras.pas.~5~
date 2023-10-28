@@ -1,0 +1,124 @@
+unit uParcelasCompras;
+
+interface
+uses Classes,
+     SysUtils,
+     uPai,
+     uCondicoesPagamentos;
+
+type ParcelaCompra = class
+
+  private
+  protected
+	numeroParcela: integer;
+  condicaoPagamento: CondicoesPagamentos;
+	dataVencimento: TdateTime;
+  ValorParcela: Currency;
+  idCompra: integer;
+  public
+     constructor crieObj;
+     destructor destrua_se;
+     function getaNumeroParcela: integer;
+     function getcondicaoPagamento: CondicoesPagamentos;
+     function getdataVencimento: TdateTime;
+     function getValorParcela: Currency;
+     function getIdCompra: integer;
+
+     procedure setNumeroParcela(pNumeroParcela: integer);
+     procedure setcondicaoPagamento(pCondicaoPagamento: CondicoesPagamentos);
+     procedure setdataVencimento(pdataVencimento: TdateTime);
+     procedure setvalorParcela(pValorParcela: currency);
+     procedure setIdCompra(pIdCompra: integer);
+
+     function clone : ParcelaCompra;
+     procedure limparDados;
+end;
+implementation
+
+{ ParcelaCompra }
+
+function ParcelaCompra.clone: ParcelaCompra;
+begin
+  Result:= ParcelaCompra.crieObj;
+
+  Result.setNumeroParcela(NumeroParcela);
+  Result.setcondicaoPagamento(CondicaoPagamento);
+  Result.setdataVencimento(dataVencimento);
+  Result.setvalorParcela(ValorParcela);
+  Result.setIdCompra(IdCompra);
+
+end;
+
+constructor ParcelaCompra.crieObj;
+begin
+  condicaoPagamento := condicoesPagamentos.crieObj;
+
+  limparDados;
+end;
+
+destructor ParcelaCompra.destrua_se;
+begin
+  condicaoPagamento.destrua_se;
+end;
+
+function ParcelaCompra.getaNumeroParcela: integer;
+begin
+  result := NumeroParcela;
+end;
+
+function ParcelaCompra.getcondicaoPagamento: CondicoesPagamentos;
+begin
+  result := CondicaoPagamento.clone;
+end;
+
+function ParcelaCompra.getdataVencimento: TdateTime;
+begin
+  result := dataVencimento;
+end;
+
+function ParcelaCompra.getIdCompra: integer;
+begin
+  result := IdCompra;
+end;
+
+function ParcelaCompra.getValorParcela: Currency;
+begin
+  result := ValorParcela;
+end;
+
+procedure ParcelaCompra.limparDados;
+begin
+  NumeroParcela := 0;
+  CondicaoPagamento.limparDados;
+  dataVencimento := 0;
+  ValorParcela := 0;
+  IdCompra := 0;
+end;
+
+procedure ParcelaCompra.setcondicaoPagamento(
+  pCondicaoPagamento: CondicoesPagamentos);
+begin
+  condicaoPagamento := pCondicaoPagamento.clone;
+end;
+
+procedure ParcelaCompra.setdataVencimento(pdataVencimento: TdateTime);
+begin
+  dataVencimento := pDataVencimento;
+end;
+
+procedure ParcelaCompra.setIdCompra(pIdCompra: integer);
+begin
+  IdCompra := pIdCompra
+end;
+
+procedure ParcelaCompra.setNumeroParcela(pNumeroParcela: integer);
+begin
+  NumeroParcela := pNumeroParcela;
+end;
+
+procedure ParcelaCompra.setvalorParcela(pValorParcela: currency);
+begin
+  ValorParcela := pValorParcela;
+end;
+
+end.

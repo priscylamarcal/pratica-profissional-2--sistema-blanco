@@ -37,8 +37,8 @@ requires
   xmlrtl;
 
 contains
-  campoEdit in '..\Source\campoEdit.pas',
   ComboBox in '..\Source\ComboBox.pas',
-  MaskEdit1 in '..\Source\MaskEdit1.pas';
+  MaskEdit1 in '..\Source\MaskEdit1.pas',
+  campoEdit in '..\Source\campoEdit.pas';
 
 end.
